@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 export default function ContactForm({ email }: { email?: string | null }) {
   const [name, setName] = useState("");
@@ -8,9 +8,9 @@ export default function ContactForm({ email }: { email?: string | null }) {
   const [message, setMessage] = useState("");
   const [sent, setSent] = useState(false);
   const [mag, setMag] = useState({ x: 0, y: 0 });
-  const btnRef = useRef<HTMLDivElement>(null);
 
-  const ready = [name, emailField, message].every((v) => v.trim().length > 1);
+  const filled = [name, emailField, message].every((v) => v.trim().length > 1);
+  const ready = filled && !!email;
 
   function magMove(e: React.MouseEvent<HTMLDivElement>) {
     const r = e.currentTarget.getBoundingClientRect();
@@ -21,14 +21,11 @@ export default function ContactForm({ email }: { email?: string | null }) {
     setMag({ x: dx, y: dy });
   }
 
-  function fire(e: React.MouseEvent) {
-    e.preventDefault();
-    if (!ready) return;
-    if (email) {
-      const subject = encodeURIComponent(`Message from ${name}`);
-      const body = encodeURIComponent(`${message}\n\n— ${name} (${emailField})`);
-      window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
-    }
+  function fire() {
+    if (!ready || !email) return;
+    const subject = encodeURIComponent(`Message from ${name}`);
+    const body = encodeURIComponent(`${message}\n\n— ${name} (${emailField})`);
+    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
     setSent(true);
   }
 
@@ -71,35 +68,38 @@ export default function ContactForm({ email }: { email?: string | null }) {
       <div className="flex flex-col gap-5">
         {!sent ? (
           <div
-            ref={btnRef}
             onMouseMove={magMove}
             onMouseLeave={() => setMag({ x: 0, y: 0 })}
             className="-m-7 inline-block max-w-full p-7"
           >
-            <div
-              role="button"
-              tabIndex={0}
+            <button
+              type="button"
               onClick={fire}
-              onKeyDown={(e) => e.key === "Enter" && fire(e as unknown as React.MouseEvent)}
-              className="inline-flex cursor-pointer select-none items-center gap-2.5 whitespace-nowrap rounded-full border border-line bg-bg2 px-7 py-[15px] font-label text-xs uppercase tracking-wide text-ink transition-[border-color,box-shadow,color] duration-200 hover:border-accent hover:text-accent hover:shadow-[0_0_30px_-8px_rgb(var(--glow)_/_var(--glow-a))]"
+              disabled={!ready}
+              className="inline-flex cursor-pointer select-none items-center gap-2.5 whitespace-nowrap rounded-full border border-line bg-bg2 px-7 py-[15px] font-label text-xs uppercase tracking-wide text-ink transition-[border-color,box-shadow,color] duration-200 disabled:cursor-not-allowed hover:enabled:border-accent hover:enabled:text-accent hover:enabled:shadow-[0_0_30px_-8px_rgb(var(--glow)_/_var(--glow-a))]"
               style={{
                 opacity: ready ? 1 : 0.4,
                 transform: `translate3d(${mag.x}px, ${mag.y}px, 0)`,
                 transition: "transform 420ms cubic-bezier(.2,.9,.2,1), border-color 240ms ease, box-shadow 320ms ease, color 200ms ease, opacity 300ms ease",
               }}
             >
-              {ready ? "Send message" : "Fill all three"}
+              {!email
+                ? "Contact isn't set up yet"
+                : filled
+                  ? "Send message"
+                  : "Fill all three"}
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M4 12h15" />
                 <path d="m13 6 6 6-6 6" />
               </svg>
-            </div>
+            </button>
           </div>
         ) : (
           <div className="relative overflow-hidden rounded-2xl border border-accent bg-bg2 px-6 py-[22px] shadow-[0_0_46px_-14px_rgb(var(--glow)_/_var(--glow-a))]">
-            <p className="eyebrow relative m-0 mb-2.5 text-accent">Message sent</p>
+            <p className="eyebrow relative m-0 mb-2.5 text-accent">Opening your email app</p>
             <p className="relative m-0 mb-3.5 text-[15px] leading-relaxed text-ink">
-              Thanks — I&rsquo;ll reply within a couple of days.
+              I&rsquo;ve pre-filled a message there — hit send in your email
+              app to actually reach me.
             </p>
             <button
               type="button"
@@ -111,14 +111,18 @@ export default function ContactForm({ email }: { email?: string | null }) {
               }}
               className="relative font-label text-[11px] tracking-wide text-accent"
             >
-              Send another
+              Start over
             </button>
           </div>
         )}
 
         {!sent && (
           <p className="m-0 font-label text-[11px] tracking-wide text-ink2">
-            {ready ? "" : "Fill in all three fields to arm the send."}
+            {!email
+              ? "No contact email is configured for this site yet — try one of the links instead."
+              : filled
+                ? ""
+                : "Fill in all three fields to arm the send."}
           </p>
         )}
       </div>

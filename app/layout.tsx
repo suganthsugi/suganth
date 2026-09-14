@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import SocialLinks from "@/components/SocialLinks";
 import ThemeToggle from "@/components/ThemeToggle";
 import Starfield from "@/components/Starfield";
+import MobileNav from "@/components/MobileNav";
 
 const sans = Manrope({
   subsets: ["latin"],
@@ -79,6 +80,11 @@ export default async function RootLayout({
 
   const name = config?.ownerName || config?.title || "Portfolio";
   const year = new Date().getFullYear();
+  const navLinks = [
+    ...categories.map((c) => ({ href: `/${c.slug}`, label: c.name })),
+    { href: "/about", label: "About" },
+    { href: "/contact", label: "Contact" },
+  ];
 
   return (
     <html
@@ -93,10 +99,10 @@ export default async function RootLayout({
         <Starfield />
 
         <div className="relative z-[1] mx-auto flex min-h-screen w-full max-w-[1080px] flex-col px-[clamp(18px,5vw,32px)]">
-          <header className="reveal flex flex-wrap items-center justify-between gap-3.5 pt-[30px]">
+          <header className="reveal relative z-20 flex items-center justify-between gap-3.5 pt-[30px]">
             <Link
               href="/"
-              className="flex items-center gap-2.5 font-serif text-[22px] tracking-tight text-ink"
+              className="flex min-w-0 items-center gap-2.5 truncate font-serif text-[22px] tracking-tight text-ink"
             >
               <span
                 className="h-[7px] w-[7px] shrink-0 rounded-full bg-accent"
@@ -104,7 +110,7 @@ export default async function RootLayout({
               />
               {name}
             </Link>
-            <nav className="flex flex-wrap items-center gap-1">
+            <nav className="hidden items-center gap-1 sm:flex">
               {categories.map((c) => (
                 <Link key={c.id} href={`/${c.slug}`} className={navLinkClass}>
                   {c.name}
@@ -118,21 +124,17 @@ export default async function RootLayout({
               </Link>
               <ThemeToggle />
             </nav>
+            <div className="flex shrink-0 items-center gap-2 sm:hidden">
+              <ThemeToggle />
+              <MobileNav links={navLinks} />
+            </div>
           </header>
 
           <main className="w-full flex-1">{children}</main>
 
           <footer className="flex flex-wrap items-center justify-between gap-6 border-t border-line py-[34px] pb-[46px]">
-            <p className="m-0 flex items-center gap-3.5 font-label text-[11px] tracking-wide text-ink2">
-              <span>
-                © {year} {config?.ownerName || name}
-              </span>
-              <Link
-                href="/__lost"
-                className="inline-flex min-h-11 items-center px-1.5 text-ink2 opacity-60 transition-opacity duration-200 hover:text-accent hover:opacity-100"
-              >
-                404
-              </Link>
+            <p className="m-0 font-label text-[11px] tracking-wide text-ink2">
+              © {year} {config?.ownerName || name}
             </p>
             <SocialLinks links={socialLinks} email={config?.email} />
           </footer>

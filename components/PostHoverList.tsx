@@ -22,7 +22,14 @@ const DOTS: [number, number, number][] = [
   [35, 44, 1],
 ];
 
-type Peek = { post: PostListItem; x: number; y: number; tilt: number; dy: number };
+type Peek = {
+  post: PostListItem;
+  image: string;
+  x: number;
+  y: number;
+  tilt: number;
+  dy: number;
+};
 
 /**
  * Both `Category.listStyle` display modes, admin-chosen per category (no
@@ -65,10 +72,13 @@ export default function PostHoverList({
       onMouseEnter: (e: React.MouseEvent<HTMLElement>) => {
         if (touch) return;
         const r = e.currentTarget.getBoundingClientRect();
-        const spot = peekSpot(r);
         setHoverId(p.id);
         setMouse({ x: e.clientX - r.left, y: e.clientY - r.top });
-        setPeek({ post: p, x: spot.left, y: spot.top, tilt: 0, dy: 14 });
+        // Nothing to preview without an image — skip the floating panel
+        // rather than showing an empty "No image" placeholder on every hover.
+        if (!p.image) return;
+        const spot = peekSpot(r);
+        setPeek({ post: p, image: p.image, x: spot.left, y: spot.top, tilt: 0, dy: 14 });
       },
       onMouseMove: (e: React.MouseEvent<HTMLElement>) => {
         if (touch) return;
@@ -161,12 +171,12 @@ export default function PostHoverList({
             href={`/posts/${p.slug}`}
             {...handlers(p)}
             style={revealStyle}
-            className="reveal flex items-baseline justify-between gap-6 border-b border-line px-1 py-[22px] transition-[padding,color] duration-300 last:border-b-0 hover:pl-4 hover:text-accent"
+            className="reveal flex flex-col gap-1 border-b border-line px-1 py-[22px] transition-[padding,color] duration-300 last:border-b-0 hover:pl-4 hover:text-accent sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
           >
-            <span className="min-w-0 truncate text-[17px] leading-snug">
+            <span className="min-w-0 text-[17px] leading-snug sm:truncate">
               {p.title}
             </span>
-            <span className="shrink-0 whitespace-nowrap font-label text-[11px] text-ink2">
+            <span className="font-label text-[11px] text-ink2 sm:shrink-0 sm:whitespace-nowrap">
               {fmtDate(p.createdAt)}
             </span>
           </Link>
@@ -181,17 +191,13 @@ export default function PostHoverList({
           }}
         >
           <div className="overflow-hidden rounded-xl border border-line bg-bg2 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.8)]">
-            <div className="relative grid aspect-[16/10] place-items-center overflow-hidden bg-bg">
-              {peek.post.image ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={peek.post.image}
-                  alt=""
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
-              ) : (
-                <span className="eyebrow text-ink2">No image</span>
-              )}
+            <div className="relative aspect-[16/10] overflow-hidden bg-bg">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={peek.image}
+                alt=""
+                className="absolute inset-0 h-full w-full object-cover"
+              />
             </div>
             <p className="m-0 truncate px-3 py-2.5 font-label text-[10px] text-ink2">
               {peek.post.title}
