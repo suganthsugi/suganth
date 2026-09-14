@@ -22,7 +22,7 @@ panel for managing categories and rich-text posts.
 - Tailwind CSS v3 (design tokens as CSS variables in `app/globals.css`)
 - Prisma ORM + PostgreSQL 16 (Docker)
 - Auth.js (NextAuth v5) — credentials provider, JWT sessions
-- Tiptap rich-text editor
+- TinyMCE rich-text editor (self-hosted from `/public/tinymce`, GPL license key)
 - bcryptjs (password hashing), zod (validation)
 
 ## Commands
@@ -75,8 +75,11 @@ Sign in at `/admin/login`; `/admin` is the dashboard.
 
 ## Conventions
 
-- Post content is stored as **HTML** (`Post.contentHtml`) — Tiptap `getHTML()`.
+- Post content is stored as **HTML** (`Post.contentHtml`) — TinyMCE output.
   Do not add a cover-image column; derive images from content.
+- TinyMCE is self-hosted: `scripts/copy-tinymce.mjs` vendors
+  `node_modules/tinymce` → `public/tinymce` on `postinstall`/`build`. That dir is
+  gitignored and regenerated; the editor loads it via `tinymceScriptSrc`.
 - Category slugs and post slugs are generated via `lib/slug.ts` and are unique.
 - Public pages use `export const dynamic = "force-dynamic"` so new content shows
   immediately; server actions also `revalidatePath("/", "layout")`.

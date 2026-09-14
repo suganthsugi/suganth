@@ -4,6 +4,8 @@
 FROM node:20-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json* ./
+# scripts/ is needed because `postinstall` runs scripts/copy-tinymce.mjs.
+COPY scripts ./scripts
 RUN npm ci
 
 # ---- builder: generate Prisma client + build Next.js (standalone) ----

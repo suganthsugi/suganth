@@ -91,15 +91,12 @@ body {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.875em;
 }
-
-/* Tiptap placeholder */
-.ProseMirror:focus {
-  outline: none;
+.prose table {
+  border-collapse: collapse;
+  width: 100%;
 }
-.ProseMirror p.is-editor-empty:first-child::before {
-  content: attr(data-placeholder);
-  float: left;
-  color: rgb(var(--muted));
-  pointer-events: none;
-  height: 0;
+.prose th,
+.prose td {
+  border: 1px solid rgb(var(--border));
+  padding: 0.5rem 0.75rem;
 }
