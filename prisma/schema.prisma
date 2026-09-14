@@ -26,6 +26,10 @@ model Category {
   // Both fall back gracefully when blank (see app/[category]/page.tsx).
   tagline     String?
   description String?
+  // How this category's posts are displayed, both on its own listing page
+  // and in its section on the home page: "card" (grid) or "list" (spotlight
+  // rows). Admin-configured per category — there is no visitor-facing toggle.
+  listStyle   String         @default("card")
   createdAt   DateTime       @default(now())
   posts       PostCategory[]
 
@@ -65,7 +69,14 @@ model SiteConfig {
   id          String   @id @default("singleton")
   title       String   @default("My Portfolio")
   description String   @default("A configurable portfolio.")
-  defaultView String   @default("card") // "card" | "list"
+  // Substring of `description` to render as an accent-colored italic
+  // highlight in the hero headline (e.g. "don't wake you up"). Blank renders
+  // the headline plain; a value that isn't found in `description` is ignored.
+  headlineHighlight String?
+  // Profile picture shown in the hero avatar circle — a URL or a data: URI
+  // (the admin uploader downsizes the image client-side and stores it as
+  // one). Blank falls back to the owner's initial letter.
+  avatarUrl   String?
   // Personal / contact details — all optional, all editable in admin settings.
   ownerName    String?
   email        String?

@@ -7,7 +7,8 @@ import { prisma } from "@/lib/prisma";
 const schema = z.object({
   title: z.string().trim().min(1, "Title is required").max(120),
   description: z.string().trim().max(300).default(""),
-  defaultView: z.enum(["card", "list"]),
+  headlineHighlight: z.string().trim().max(160).optional(),
+  avatarUrl: z.string().trim().max(400000).optional(),
   ownerName: z.string().trim().max(120).optional(),
   email: z
     .string()
@@ -33,7 +34,8 @@ export async function updateSettings(
   const parsed = schema.safeParse({
     title: formData.get("title"),
     description: formData.get("description") ?? "",
-    defaultView: formData.get("defaultView"),
+    headlineHighlight: formData.get("headlineHighlight") ?? "",
+    avatarUrl: formData.get("avatarUrl") ?? "",
     ownerName: formData.get("ownerName") ?? "",
     email: formData.get("email") ?? "",
     location: formData.get("location") ?? "",
@@ -48,7 +50,8 @@ export async function updateSettings(
   const data = {
     title: parsed.data.title,
     description: parsed.data.description,
-    defaultView: parsed.data.defaultView,
+    headlineHighlight: parsed.data.headlineHighlight || null,
+    avatarUrl: parsed.data.avatarUrl || null,
     ownerName: parsed.data.ownerName || null,
     email: parsed.data.email || null,
     location: parsed.data.location || null,

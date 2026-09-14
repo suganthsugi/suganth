@@ -22,7 +22,8 @@ export default async function SettingsPage() {
             initial={{
               title: config?.title ?? "My Portfolio",
               description: config?.description ?? "",
-              defaultView: config?.defaultView ?? "card",
+              headlineHighlight: config?.headlineHighlight ?? "",
+              avatarUrl: config?.avatarUrl ?? "",
               ownerName: config?.ownerName ?? "",
               email: config?.email ?? "",
               location: config?.location ?? "",

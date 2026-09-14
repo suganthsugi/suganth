@@ -38,7 +38,6 @@ async function main() {
       id: "singleton",
       title: "My Portfolio",
       description: "I build things for the web.",
-      defaultView: "card",
       email,
       availability: "Available for work",
     },

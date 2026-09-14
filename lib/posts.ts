@@ -56,6 +56,7 @@ export type HomeSection = {
   name: string;
   slug: string;
   total: number;
+  listStyle: "card" | "list";
   posts: PostListItem[];
 };
 
@@ -80,6 +81,7 @@ export async function getHomeSections(perSection = 4): Promise<HomeSection[]> {
       name: c.name,
       slug: c.slug,
       total: c.posts.length,
+      listStyle: c.listStyle === "list" ? ("list" as const) : ("card" as const),
       posts: c.posts.slice(0, perSection).map((pc) => toListItem(pc.post)),
     }))
     .filter((s) => s.total > 0);

@@ -1,5 +1,3 @@
-export type ViewMode = "card" | "list";
-
 /** Serializable shape passed from server pages to listing components. */
 export type PostListItem = {
   id: string;

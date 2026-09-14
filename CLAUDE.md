@@ -13,8 +13,10 @@ panel for managing categories and rich-text posts.
 - **No cover-image field by design.** The listing hover preview is extracted
   from the **first `<img>` in the post's rich-text content** (see
   `lib/content.ts` → `extractFirstImage`).
-- Each listing supports two views the visitor can toggle: **card grid** and
-  **list**. The default view is set in admin **Settings**.
+- Each category renders its posts as either a **card grid** or a **spotlight
+  list** (`Category.listStyle`) — this is an admin choice per category, set in
+  admin **Categories**, not a visitor-facing toggle. The same style also
+  drives that category's section on the home page.
 
 ## Stack
 
@@ -56,16 +58,18 @@ docker compose -f docker-compose.prod.yml up --build
 - `lib/` — `prisma.ts` (client singleton), `content.ts` (image/excerpt from
   HTML), `slug.ts`, `posts.ts` (public queries + `toListItem` mapper),
   `types.ts`.
-- `app/` (public) — `page.tsx` (home), `[category]/page.tsx` (category listing
-  with toggle), `posts/[slug]/page.tsx` (single post), `about/page.tsx`,
+- `app/` (public) — `page.tsx` (home), `[category]/page.tsx` (category
+  listing), `posts/[slug]/page.tsx` (single post), `about/page.tsx`,
   `contact/page.tsx`.
 - `app/admin/` — `layout.tsx` (shell + sign out), `page.tsx` (dashboard),
-  `login/`, `categories/`, `posts/` (list, `new/`, `[id]/edit/`), `settings/`.
-  All mutations are **server actions** in the respective `actions.ts` files.
-- `components/` — `PostListing.tsx` (client card/list toggle), `PostCard.tsx`
-  (grid card), `PostHoverList.tsx` (spotlight/thin row lists with the
-  cursor-following image preview), `Starfield.tsx` (ambient background +
-  cursor spotlight), `ContactForm.tsx`, `ThemeToggle.tsx`, `SocialLinks.tsx`,
+  `login/`, `categories/` (name, slug, tagline/description, list style),
+  `posts/` (list, `new/`, `[id]/edit/`), `settings/`. All mutations are
+  **server actions** in the respective `actions.ts` files.
+- `components/` — `PostSection.tsx` (renders a category's posts as a card grid
+  or spotlight list per `Category.listStyle`), `PostCard.tsx` (grid card),
+  `PostHoverList.tsx` (spotlight rows with the cursor-following image
+  preview), `Starfield.tsx` (ambient background + cursor spotlight),
+  `ContactForm.tsx`, `ThemeToggle.tsx`, `SocialLinks.tsx`,
   `editor/RichTextEditor.tsx`.
 
 ## Admin

@@ -12,6 +12,7 @@ export default async function CategoriesPage() {
       slug: true,
       tagline: true,
       description: true,
+      listStyle: true,
       _count: { select: { posts: true } },
     },
   });

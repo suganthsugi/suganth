@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { PostListItem } from "@/lib/types";
 
-type Variant = "spotlight" | "thin";
-
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleDateString(undefined, {
     month: "short",
@@ -13,7 +11,7 @@ function fmtDate(iso: string) {
   });
 }
 
-// Decorative twinkle positions for the spotlight-card hover state.
+// Decorative twinkle positions for the "card" row's hover glow.
 const DOTS: [number, number, number][] = [
   [9, 26, 0],
   [22, 72, 1],
@@ -27,18 +25,18 @@ const DOTS: [number, number, number][] = [
 type Peek = { post: PostListItem; x: number; y: number; tilt: number; dy: number };
 
 /**
- * Shared hover behaviour for post listings: a mouse-tracked glow + twinkling
- * stars (spotlight rows, used for the featured home section and category
- * listing pages) or a plain indent-on-hover row (thin rows, used for
- * secondary home sections) — both drive a floating cursor-following preview
- * of the post's first content image, matching the Claude Design import.
+ * Both `Category.listStyle` display modes, admin-chosen per category (no
+ * visitor-facing toggle): "card" is a full-width row with title, tag pill,
+ * description and hover glow/stars; "list" is a minimal title + date row.
+ * Both drive a floating cursor-following preview of the post's first content
+ * image, matching the Claude Design import.
  */
 export default function PostHoverList({
   posts,
-  variant,
+  style,
 }: {
   posts: PostListItem[];
-  variant: Variant;
+  style: "card" | "list";
 }) {
   const [hoverId, setHoverId] = useState<string | null>(null);
   const [mouse, setMouse] = useState({ x: -400, y: -400 });
@@ -96,7 +94,7 @@ export default function PostHoverList({
   return (
     <div className="flex flex-col">
       {posts.map((p) =>
-        variant === "spotlight" ? (
+        style === "card" ? (
           <Link
             key={p.id}
             href={`/posts/${p.slug}`}
@@ -123,8 +121,7 @@ export default function PostHoverList({
                     top: `${y}%`,
                     width: c === 0 ? 3 : 2,
                     height: c === 0 ? 3 : 2,
-                    background:
-                      c === 1 ? "rgb(var(--accent))" : "rgb(var(--star))",
+                    background: c === 1 ? "rgb(var(--accent))" : "rgb(var(--star))",
                     boxShadow: "0 0 8px rgb(var(--accent))",
                     animation: `twk ${2.2 + i * 0.2}s ease-in-out ${i * 0.15}s infinite`,
                   }}

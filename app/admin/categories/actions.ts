@@ -40,6 +40,7 @@ export async function createCategory(
 const copySchema = z.object({
   tagline: z.string().trim().max(160).optional(),
   description: z.string().trim().max(300).optional(),
+  listStyle: z.enum(["card", "list"]).default("card"),
 });
 
 export async function updateCategoryCopy(formData: FormData): Promise<void> {
@@ -49,6 +50,7 @@ export async function updateCategoryCopy(formData: FormData): Promise<void> {
   const parsed = copySchema.safeParse({
     tagline: formData.get("tagline") ?? "",
     description: formData.get("description") ?? "",
+    listStyle: formData.get("listStyle"),
   });
   if (!parsed.success) return;
 
@@ -57,6 +59,7 @@ export async function updateCategoryCopy(formData: FormData): Promise<void> {
     data: {
       tagline: parsed.data.tagline || null,
       description: parsed.data.description || null,
+      listStyle: parsed.data.listStyle,
     },
   });
 

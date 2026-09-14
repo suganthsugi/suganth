@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getHomeSections } from "@/lib/posts";
-import PostHoverList from "@/components/PostHoverList";
+import { splitHighlight } from "@/lib/content";
+import PostSection from "@/components/PostSection";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +14,8 @@ export default async function HomePage() {
 
   const name = config?.ownerName || config?.title || "Portfolio";
   const initial = name.trim().charAt(0).toUpperCase();
+  const headline = config?.description || config?.title || "Portfolio";
+  const highlight = splitHighlight(headline, config?.headlineHighlight);
 
   return (
     <div>
@@ -24,9 +27,18 @@ export default async function HomePage() {
             className="relative grid h-[46px] w-[46px] shrink-0 place-items-center overflow-hidden rounded-full border border-line bg-bg2"
             style={{ boxShadow: "0 0 0 4px rgb(var(--halo) / var(--halo-a))" }}
           >
-            <span className="font-label text-[13px] tracking-wide text-ink2">
-              {initial}
-            </span>
+            {config?.avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={config.avatarUrl}
+                alt={name}
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            ) : (
+              <span className="font-label text-[13px] tracking-wide text-ink2">
+                {initial}
+              </span>
+            )}
           </span>
           {config?.availability && (
             <p className="eyebrow m-0 flex items-center gap-2.5 whitespace-nowrap text-ink2">
@@ -39,8 +51,16 @@ export default async function HomePage() {
           )}
         </div>
 
-        <h1 className="m-0 mb-6 max-w-3xl font-serif text-[clamp(34px,4.6vw,54px)] font-normal leading-[1.08] tracking-tight text-ink">
-          {config?.description || config?.title || "Portfolio"}
+        <h1 className="m-0 mb-6 max-w-3xl text-pretty font-serif text-[clamp(34px,4.6vw,54px)] font-normal leading-[1.08] tracking-tight text-ink">
+          {highlight ? (
+            <>
+              {highlight.before}
+              <em className="italic text-accent">{highlight.match}</em>
+              {highlight.after}
+            </>
+          ) : (
+            headline
+          )}
         </h1>
 
         {config?.bio && (
@@ -67,10 +87,7 @@ export default async function HomePage() {
                   All {section.total} →
                 </Link>
               </div>
-              <PostHoverList
-                posts={section.posts}
-                variant={i === 0 ? "spotlight" : "thin"}
-              />
+              <PostSection posts={section.posts} listStyle={section.listStyle} />
             </div>
           </section>
         ))

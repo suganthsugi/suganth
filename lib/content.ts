@@ -33,3 +33,24 @@ export function readingMinutes(html: string | null | undefined): number {
   const words = stripHtml(html).split(/\s+/).filter(Boolean).length;
   return Math.max(1, Math.round(words / 200));
 }
+
+/**
+ * Split `text` around the first occurrence of `highlight` (case-insensitive),
+ * for rendering the hero headline with one accent-highlighted phrase. Returns
+ * null when there's nothing to highlight or the phrase isn't found, so the
+ * caller can fall back to rendering `text` plain.
+ */
+export function splitHighlight(
+  text: string,
+  highlight: string | null | undefined,
+): { before: string; match: string; after: string } | null {
+  const needle = highlight?.trim();
+  if (!needle) return null;
+  const i = text.toLowerCase().indexOf(needle.toLowerCase());
+  if (i === -1) return null;
+  return {
+    before: text.slice(0, i),
+    match: text.slice(i, i + needle.length),
+    after: text.slice(i + needle.length),
+  };
+}

@@ -14,6 +14,7 @@ type Category = {
   slug: string;
   tagline: string | null;
   description: string | null;
+  listStyle: string;
   _count: { posts: number };
 };
 
@@ -81,7 +82,7 @@ export default function CategoryManager({
 
             <form
               action={updateCategoryCopy}
-              className="mt-3 grid gap-2 sm:grid-cols-[1fr_1.4fr_auto] sm:items-start"
+              className="mt-3 grid gap-2 sm:grid-cols-[1fr_1.4fr_auto_auto] sm:items-start"
             >
               <input type="hidden" name="id" value={c.id} />
               <input
@@ -96,6 +97,21 @@ export default function CategoryManager({
                 placeholder="Description shown under the headline"
                 className="rounded-md border border-border bg-surface px-3 py-2 text-sm outline-none focus:border-accent"
               />
+              <select
+                // React re-applies a <select>'s `defaultValue` on every
+                // re-render (unlike plain inputs), snapping it back to
+                // whatever it was at first mount. Keying on the current
+                // value forces a remount after each save so it reflects
+                // what was actually saved instead of the stale original.
+                key={c.listStyle}
+                name="listStyle"
+                defaultValue={c.listStyle}
+                title="How this category's posts are displayed on its listing page and in its home page section"
+                className="rounded-md border border-border bg-surface px-3 py-2 text-sm outline-none focus:border-accent"
+              >
+                <option value="card">Cards</option>
+                <option value="list">List</option>
+              </select>
               <button
                 type="submit"
                 className="rounded-md border border-border px-3 py-2 text-sm text-muted transition-colors hover:border-accent hover:text-fg"

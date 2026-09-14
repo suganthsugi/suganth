@@ -46,7 +46,11 @@ export default async function AdminLayout({
         <p className="mt-4 px-3 text-xs text-muted">{session.user.email}</p>
       </aside>
 
-      <section>{children}</section>
+      {/* min-w-0: grid items default to min-width:auto, so without this a
+          long unbreakable string (e.g. a post title) forces this whole
+          track — and the page — wider than the viewport instead of letting
+          `truncate` inside it do its job. */}
+      <section className="min-w-0">{children}</section>
     </div>
   );
 }

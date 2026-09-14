@@ -1,8 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getPostsByCategory } from "@/lib/posts";
-import PostListing from "@/components/PostListing";
-import type { ViewMode } from "@/lib/types";
+import PostSection from "@/components/PostSection";
 
 export const dynamic = "force-dynamic";
 
@@ -20,10 +19,7 @@ export default async function CategoryPage({
   const { category: slug } = await params;
   if (RESERVED.has(slug)) notFound();
 
-  const [category, config] = await Promise.all([
-    prisma.category.findUnique({ where: { slug } }),
-    prisma.siteConfig.findUnique({ where: { id: "singleton" } }),
-  ]);
+  const category = await prisma.category.findUnique({ where: { slug } });
   if (!category) notFound();
 
   const posts = await getPostsByCategory(slug);
@@ -41,9 +37,9 @@ export default async function CategoryPage({
         </p>
       </section>
 
-      <PostListing
+      <PostSection
         posts={posts}
-        defaultView={(config?.defaultView as ViewMode) ?? "card"}
+        listStyle={category.listStyle === "list" ? "list" : "card"}
       />
     </div>
   );

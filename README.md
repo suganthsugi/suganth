@@ -4,7 +4,7 @@ A configurable portfolio built with Next.js, Prisma, and PostgreSQL.
 
 - Configurable **categories** (add/remove from the admin).
 - **Posts** with a rich-text editor, mappable to **multiple categories**.
-- **Card** and **list** listing views (toggleable).
+- **Card** or **spotlight list** display per category, chosen in admin.
 - Listing hover images are taken from the post content itself — no cover-image
   upload.
 - Email/password admin login at `/admin`.

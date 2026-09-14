@@ -1,7 +1,34 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useRef, useState } from "react";
 import { updateSettings, type SettingsState } from "./actions";
+
+/** Downscale an image client-side and resolve a compact JPEG data: URI —
+ * keeps the avatar small enough to store as a plain SiteConfig text field. */
+function fileToAvatarDataUrl(file: File, maxSize = 256): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const reader = new FileReader();
+    reader.onerror = () => reject(reader.error);
+    reader.onload = () => {
+      img.onerror = () => reject(new Error("Could not read image"));
+      img.onload = () => {
+        const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+        const w = Math.round(img.width * scale);
+        const h = Math.round(img.height * scale);
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return reject(new Error("Canvas unavailable"));
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL("image/jpeg", 0.85));
+      };
+      img.src = String(reader.result);
+    };
+    reader.readAsDataURL(file);
+  });
+}
 
 export default function SettingsForm({
   initial,
@@ -9,7 +36,8 @@ export default function SettingsForm({
   initial: {
     title: string;
     description: string;
-    defaultView: string;
+    headlineHighlight: string;
+    avatarUrl: string;
     ownerName: string;
     email: string;
     location: string;
@@ -24,6 +52,20 @@ export default function SettingsForm({
     updateSettings,
     {},
   );
+  const [avatarUrl, setAvatarUrl] = useState(initial.avatarUrl);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  async function onAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      setAvatarError(null);
+      setAvatarUrl(await fileToAvatarDataUrl(file));
+    } catch {
+      setAvatarError("Couldn't read that image — try a different file.");
+    }
+  }
 
   return (
     <form action={formAction} className="max-w-lg space-y-5">
@@ -40,6 +82,47 @@ export default function SettingsForm({
       </div>
 
       <div>
+        <span className="block text-sm font-medium">Profile picture</span>
+        <div className="mt-2 flex items-center gap-4">
+          <span className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full border border-border bg-surface-2">
+            {avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={avatarUrl} alt="" className="h-full w-full object-cover" />
+            ) : (
+              <span className="text-xs text-muted">None</span>
+            )}
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="rounded-md border border-border px-3 py-2 text-sm text-muted transition-colors hover:border-accent hover:text-fg"
+            >
+              Upload image
+            </button>
+            {avatarUrl && (
+              <button
+                type="button"
+                onClick={() => setAvatarUrl("")}
+                className="text-sm text-muted hover:text-red-500"
+              >
+                Remove
+              </button>
+            )}
+          </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={onAvatarChange}
+            className="hidden"
+          />
+        </div>
+        {avatarError && <p className="mt-1 text-sm text-red-500">{avatarError}</p>}
+        <input type="hidden" name="avatarUrl" value={avatarUrl} />
+      </div>
+
+      <div>
         <label htmlFor="description" className="block text-sm font-medium">
           Tagline <span className="text-muted">(hero headline)</span>
         </label>
@@ -48,6 +131,20 @@ export default function SettingsForm({
           name="description"
           defaultValue={initial.description}
           rows={2}
+          className="mt-1 w-full rounded-md border border-border bg-surface px-3 py-2 outline-none focus:border-accent"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="headlineHighlight" className="block text-sm font-medium">
+          Highlight phrase{" "}
+          <span className="text-muted">(a phrase within the tagline to accent — blank for none)</span>
+        </label>
+        <input
+          id="headlineHighlight"
+          name="headlineHighlight"
+          defaultValue={initial.headlineHighlight}
+          placeholder="don't wake you up"
           className="mt-1 w-full rounded-md border border-border bg-surface px-3 py-2 outline-none focus:border-accent"
         />
       </div>
@@ -67,7 +164,7 @@ export default function SettingsForm({
 
       <div>
         <label htmlFor="availability" className="block text-sm font-medium">
-          Availability badge{" "}
+          Small notice badge{" "}
           <span className="text-muted">(e.g. “Available for work” — blank to hide)</span>
         </label>
         <input
@@ -157,21 +254,6 @@ export default function SettingsForm({
           rows={5}
           className="mt-1 w-full rounded-md border border-border bg-surface px-3 py-2 font-mono text-xs outline-none focus:border-accent"
         />
-      </div>
-
-      <div>
-        <label htmlFor="defaultView" className="block text-sm font-medium">
-          Default listing view
-        </label>
-        <select
-          id="defaultView"
-          name="defaultView"
-          defaultValue={initial.defaultView}
-          className="mt-1 rounded-md border border-border bg-surface px-3 py-2 outline-none focus:border-accent"
-        >
-          <option value="card">Cards</option>
-          <option value="list">List</option>
-        </select>
       </div>
 
       {state.error && <p className="text-sm text-red-500">{state.error}</p>}
