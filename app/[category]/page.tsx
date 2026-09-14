@@ -27,11 +27,22 @@ export default async function CategoryPage({
   return (
     <div>
       <section className="mb-10 max-w-[700px] pb-2 pt-4 sm:pt-8">
-        <p className="eyebrow mb-5 text-accent">{category.name}</p>
-        <h1 className="m-0 mb-5 text-pretty font-serif text-[clamp(38px,6vw,60px)] font-normal leading-[1.04] tracking-tight text-ink">
+        <p
+          className="reveal eyebrow mb-5 text-accent"
+          style={{ "--reveal-delay": "0ms" } as React.CSSProperties}
+        >
+          {category.name}
+        </p>
+        <h1
+          className="reveal m-0 mb-5 text-pretty font-serif text-[clamp(38px,6vw,60px)] font-normal leading-[1.04] tracking-tight text-ink"
+          style={{ "--reveal-delay": "60ms" } as React.CSSProperties}
+        >
           {category.tagline || category.name}
         </h1>
-        <p className="m-0 text-pretty text-[16px] leading-[1.7] text-ink2">
+        <p
+          className="reveal m-0 text-pretty text-[16px] leading-[1.7] text-ink2"
+          style={{ "--reveal-delay": "120ms" } as React.CSSProperties}
+        >
           {category.description ||
             `${posts.length} ${posts.length === 1 ? "item" : "items"}.`}
         </p>

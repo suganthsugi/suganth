@@ -93,13 +93,17 @@ export default function PostHoverList({
 
   return (
     <div className="flex flex-col">
-      {posts.map((p) =>
-        style === "card" ? (
+      {posts.map((p, i) => {
+        const revealStyle = {
+          "--reveal-delay": `${Math.min(i, 8) * 45}ms`,
+        } as React.CSSProperties;
+        return style === "card" ? (
           <Link
             key={p.id}
             href={`/posts/${p.slug}`}
             {...handlers(p)}
-            className="group relative block overflow-hidden rounded-2xl border border-transparent px-4 py-5 text-ink transition-colors duration-300 hover:border-line hover:bg-bg2 sm:px-6 sm:py-7"
+            style={revealStyle}
+            className="reveal group relative block overflow-hidden rounded-2xl border border-transparent px-4 py-5 text-ink transition-colors duration-300 hover:border-line hover:bg-bg2 sm:px-6 sm:py-7"
           >
             <div
               className="pointer-events-none absolute inset-0 transition-opacity duration-300"
@@ -156,7 +160,8 @@ export default function PostHoverList({
             key={p.id}
             href={`/posts/${p.slug}`}
             {...handlers(p)}
-            className="flex items-baseline justify-between gap-6 border-b border-line px-1 py-[22px] transition-[padding,color] duration-300 last:border-b-0 hover:pl-4 hover:text-accent"
+            style={revealStyle}
+            className="reveal flex items-baseline justify-between gap-6 border-b border-line px-1 py-[22px] transition-[padding,color] duration-300 last:border-b-0 hover:pl-4 hover:text-accent"
           >
             <span className="min-w-0 truncate text-[17px] leading-snug">
               {p.title}
@@ -165,8 +170,8 @@ export default function PostHoverList({
               {fmtDate(p.createdAt)}
             </span>
           </Link>
-        ),
-      )}
+        );
+      })}
 
       {peek && (
         <div

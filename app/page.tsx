@@ -21,7 +21,10 @@ export default async function HomePage() {
     <div>
       {/* Hero */}
       <section className="max-w-[780px] pb-14 pt-4 sm:pt-8">
-        <div className="mb-7 flex items-center gap-3.5">
+        <div
+          className="reveal mb-7 flex items-center gap-3.5"
+          style={{ "--reveal-delay": "0ms" } as React.CSSProperties}
+        >
           <span
             title={name}
             className="relative grid h-[46px] w-[46px] shrink-0 place-items-center overflow-hidden rounded-full border border-line bg-bg2"
@@ -51,7 +54,10 @@ export default async function HomePage() {
           )}
         </div>
 
-        <h1 className="m-0 mb-6 max-w-3xl text-pretty font-serif text-[clamp(34px,4.6vw,54px)] font-normal leading-[1.08] tracking-tight text-ink">
+        <h1
+          className="reveal m-0 mb-6 max-w-3xl text-pretty font-serif text-[clamp(34px,4.6vw,54px)] font-normal leading-[1.08] tracking-tight text-ink"
+          style={{ "--reveal-delay": "70ms" } as React.CSSProperties}
+        >
           {highlight ? (
             <>
               {highlight.before}
@@ -64,7 +70,10 @@ export default async function HomePage() {
         </h1>
 
         {config?.bio && (
-          <p className="m-0 max-w-xl text-lg leading-relaxed text-ink2">
+          <p
+            className="reveal m-0 max-w-xl text-lg leading-relaxed text-ink2"
+            style={{ "--reveal-delay": "140ms" } as React.CSSProperties}
+          >
             {config.bio}
           </p>
         )}
@@ -78,7 +87,7 @@ export default async function HomePage() {
           <section key={section.slug}>
             {i > 0 && <div className="h-px bg-line" />}
             <div className="pb-2 pt-12 sm:pt-[72px]">
-              <div className="mb-8 flex items-baseline justify-between">
+              <div className="reveal mb-8 flex items-baseline justify-between">
                 <h2 className="eyebrow m-0 text-ink2">{section.name}</h2>
                 <Link
                   href={`/${section.slug}`}

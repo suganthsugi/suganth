@@ -34,7 +34,10 @@ export default async function PostPage({
         ← {primary ? primary.name : "Home"}
       </Link>
 
-      <div className="mb-5 mt-8 flex flex-wrap items-center gap-3.5">
+      <div
+        className="reveal mb-5 mt-8 flex flex-wrap items-center gap-3.5"
+        style={{ "--reveal-delay": "40ms" } as React.CSSProperties}
+      >
         {post.categories.map(({ category }, i) => (
           <span key={category.slug} className="flex items-center gap-3.5">
             {i > 0 && (
@@ -58,18 +61,27 @@ export default async function PostPage({
         </span>
       </div>
 
-      <h1 className="m-0 mb-6 text-pretty font-serif text-[clamp(34px,5.4vw,52px)] font-normal leading-[1.06] tracking-tight text-ink">
+      <h1
+        className="reveal m-0 mb-6 text-pretty font-serif text-[clamp(34px,5.4vw,52px)] font-normal leading-[1.06] tracking-tight text-ink"
+        style={{ "--reveal-delay": "90ms" } as React.CSSProperties}
+      >
         {post.title}
       </h1>
 
       {post.excerpt && (
-        <p className="m-0 mb-11 text-pretty text-lg leading-relaxed text-ink2">
+        <p
+          className="reveal m-0 mb-11 text-pretty text-lg leading-relaxed text-ink2"
+          style={{ "--reveal-delay": "150ms" } as React.CSSProperties}
+        >
           {post.excerpt}
         </p>
       )}
 
       {image && (
-        <div className="relative mb-14 aspect-[16/9] overflow-hidden rounded-2xl border border-line bg-bg2">
+        <div
+          className="reveal relative mb-14 aspect-[16/9] overflow-hidden rounded-2xl border border-line bg-bg2"
+          style={{ "--reveal-delay": "200ms" } as React.CSSProperties}
+        >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={image} alt="" className="h-full w-full object-cover" />
         </div>

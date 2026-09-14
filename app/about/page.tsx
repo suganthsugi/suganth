@@ -20,16 +20,25 @@ export default async function AboutPage() {
   return (
     <div>
       <section className="max-w-[700px] pb-12 pt-4 sm:pt-8">
-        <p className="eyebrow mb-5 text-accent">About</p>
-        <h1 className="m-0 text-pretty font-serif text-[clamp(38px,6vw,58px)] font-normal leading-[1.04] tracking-tight text-ink">
+        <p
+          className="reveal eyebrow mb-5 text-accent"
+          style={{ "--reveal-delay": "0ms" } as React.CSSProperties}
+        >
+          About
+        </p>
+        <h1
+          className="reveal m-0 text-pretty font-serif text-[clamp(38px,6vw,58px)] font-normal leading-[1.04] tracking-tight text-ink"
+          style={{ "--reveal-delay": "60ms" } as React.CSSProperties}
+        >
           {config?.ownerName ? `About ${config.ownerName}` : "About"}
         </h1>
       </section>
 
       <section
-        className={`grid gap-x-14 gap-y-10 pb-20 ${
+        className={`reveal grid gap-x-14 gap-y-10 pb-20 ${
           hasSidebar ? "sm:grid-cols-[minmax(0,1fr)_270px]" : ""
         }`}
+        style={{ "--reveal-delay": "120ms" } as React.CSSProperties}
       >
         <div className="max-w-[620px]">
           {config?.aboutHtml ? (

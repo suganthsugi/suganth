@@ -93,7 +93,7 @@ export default async function RootLayout({
         <Starfield />
 
         <div className="relative z-[1] mx-auto flex min-h-screen w-full max-w-[1080px] flex-col px-[clamp(18px,5vw,32px)]">
-          <header className="flex flex-wrap items-center justify-between gap-3.5 pt-[30px]">
+          <header className="reveal flex flex-wrap items-center justify-between gap-3.5 pt-[30px]">
             <Link
               href="/"
               className="flex items-center gap-2.5 font-serif text-[22px] tracking-tight text-ink"
