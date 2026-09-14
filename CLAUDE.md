@@ -1,0 +1,92 @@
+# CLAUDE.md
+
+Guidance for Claude Code (and humans) working in this repository.
+
+## What this is
+
+A **configurable portfolio** web app: a public site plus an authenticated admin
+panel for managing categories and rich-text posts.
+
+- **Categories** (e.g. Posts, Projects) are data — add/remove them in the admin.
+- **Posts** are written with a rich-text editor and can belong to **multiple
+  categories** (many-to-many).
+- **No cover-image field by design.** The listing hover preview is extracted
+  from the **first `<img>` in the post's rich-text content** (see
+  `lib/content.ts` → `extractFirstImage`).
+- Each listing supports two views the visitor can toggle: **card grid** and
+  **list**. The default view is set in admin **Settings**.
+
+## Stack
+
+- Next.js 15 (App Router) + React 19 + TypeScript
+- Tailwind CSS v3 (design tokens as CSS variables in `app/globals.css`)
+- Prisma ORM + PostgreSQL 16 (Docker)
+- Auth.js (NextAuth v5) — credentials provider, JWT sessions
+- Tiptap rich-text editor
+- bcryptjs (password hashing), zod (validation)
+
+## Commands
+
+```bash
+npm install
+cp .env.example .env        # then edit AUTH_SECRET etc.
+
+npm run db:up               # start Postgres in Docker (dev)
+npm run db:migrate          # create/apply migrations
+npm run db:seed             # seed admin user + default categories + site config
+
+npm start                   # dev server (alias of `next dev`) → http://localhost:3000
+```
+
+Production (full stack in Docker; migrations + seed run automatically on boot):
+
+```bash
+docker compose -f docker-compose.prod.yml up --build
+```
+
+## Architecture / where things live
+
+- `prisma/schema.prisma` — data model: `User`, `Category`, `Post`,
+  `PostCategory` (join), `SiteConfig` (single "singleton" row).
+- `prisma/seed.ts` — seeds admin from `ADMIN_EMAIL`/`ADMIN_PASSWORD`, default
+  categories, and site config. Idempotent.
+- `auth.ts` / `auth.config.ts` / `middleware.ts` — Auth.js. The edge-safe
+  `auth.config.ts` guards `/admin/*`; `auth.ts` holds the DB-backed Credentials
+  provider. `/admin/login` is the sign-in page.
+- `lib/` — `prisma.ts` (client singleton), `content.ts` (image/excerpt from
+  HTML), `slug.ts`, `posts.ts` (public queries + `toListItem` mapper),
+  `types.ts`.
+- `app/` (public) — `page.tsx` (home), `[category]/page.tsx` (category listing
+  with toggle), `posts/[slug]/page.tsx` (single post).
+- `app/admin/` — `layout.tsx` (shell + sign out), `page.tsx` (dashboard),
+  `login/`, `categories/`, `posts/` (list, `new/`, `[id]/edit/`), `settings/`.
+  All mutations are **server actions** in the respective `actions.ts` files.
+- `components/` — `PostListing.tsx` (client toggle), `PostCard.tsx`,
+  `PostListRow.tsx`, `editor/RichTextEditor.tsx`.
+
+## Admin
+
+Default seeded credentials (change for production via env):
+
+- Email: `suganthjayanthi@gmail.com`
+- Password: `abcd1234`
+
+Sign in at `/admin/login`; `/admin` is the dashboard.
+
+## Conventions
+
+- Post content is stored as **HTML** (`Post.contentHtml`) — Tiptap `getHTML()`.
+  Do not add a cover-image column; derive images from content.
+- Category slugs and post slugs are generated via `lib/slug.ts` and are unique.
+- Public pages use `export const dynamic = "force-dynamic"` so new content shows
+  immediately; server actions also `revalidatePath("/", "layout")`.
+
+## Design integration (pending)
+
+The frontend is a clean baseline intended to be reskinned to the Claude Design
+project `Portfolio.dc.html`
+(`claude.ai/design/p/86ff4831-3542-443c-b756-1fc21ee8be86`). To import it, run
+`/design-login` in an interactive Claude Code terminal, then read the design via
+the `DesignSync` tool (`get_file` on `Portfolio.dc.html` and `support.js`) and
+map its tokens into `app/globals.css` + `tailwind.config.ts` and its components
+into `components/`.

@@ -1,0 +1,39 @@
+# Production: full stack (Postgres + built Next.js app).
+# Bring it up with: docker compose -f docker-compose.prod.yml up --build
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: portfolio
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-portfolio}
+      POSTGRES_DB: portfolio
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U portfolio -d portfolio"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "postgresql://portfolio:${POSTGRES_PASSWORD:-portfolio}@db:5432/portfolio?schema=public"
+      AUTH_SECRET: ${AUTH_SECRET:-please-change-this-in-production}
+      AUTH_URL: ${AUTH_URL:-http://localhost:3000}
+      AUTH_TRUST_HOST: "true"
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-suganthjayanthi@gmail.com}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-abcd1234}
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres-data:

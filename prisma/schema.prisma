@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// The single admin account (credentials seeded from env).
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String // bcrypt hash
+  name      String?
+  createdAt DateTime @default(now())
+}
+
+/// Configurable content categories (e.g. "posts", "projects").
+model Category {
+  id        String         @id @default(cuid())
+  name      String         @unique
+  slug      String         @unique
+  order     Int            @default(0)
+  createdAt DateTime       @default(now())
+  posts     PostCategory[]
+
+  @@index([order])
+}
+
+/// A portfolio item. Content is stored as HTML (Tiptap output); the listing
+/// hover image is derived from the first <img> inside `contentHtml` — there is
+/// no separate cover-image field by design.
+model Post {
+  id          String         @id @default(cuid())
+  title       String
+  slug        String         @unique
+  contentHtml String         @default("")
+  excerpt     String?
+  published   Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  categories  PostCategory[]
+
+  @@index([published, createdAt])
+}
+
+/// Many-to-many join: a post can belong to multiple categories.
+model PostCategory {
+  postId     String
+  categoryId String
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([postId, categoryId])
+  @@index([categoryId])
+}
+
+/// Single-row site configuration (id is always "singleton").
+model SiteConfig {
+  id          String   @id @default("singleton")
+  title       String   @default("My Portfolio")
+  description String   @default("A configurable portfolio.")
+  defaultView String   @default("card") // "card" | "list"
+  updatedAt   DateTime @updatedAt
+}
