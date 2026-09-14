@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { readingMinutes } from "@/lib/content";
+import { extractFirstImage, readingMinutes } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
 
@@ -23,40 +23,57 @@ export default async function PostPage({
     month: "short",
     year: "numeric",
   });
+  const image = extractFirstImage(post.contentHtml);
 
   return (
-    <article className="mx-auto max-w-2xl">
+    <article className="mx-auto max-w-[680px] pt-4 sm:pt-8">
       <Link
-        href="/"
-        className="text-sm text-muted transition-colors hover:text-accent"
+        href={primary ? `/${primary.slug}` : "/"}
+        className="font-label text-[11px] tracking-wide text-ink2 transition-colors hover:text-accent"
       >
-        ← Home
+        ← {primary ? primary.name : "Home"}
       </Link>
 
-      <div className="mb-8 mt-6 border-b border-border pb-8">
-        <div className="eyebrow mb-4 flex flex-wrap items-center gap-2">
-          {post.categories.map(({ category }, i) => (
-            <span key={category.slug} className="flex items-center gap-2">
-              {i > 0 && <span className="text-accent">•</span>}
-              <Link href={`/${category.slug}`} className="hover:text-fg">
-                {category.name}
-              </Link>
-            </span>
-          ))}
-          <span className="text-accent">•</span>
-          <span>{date}</span>
-          <span className="text-accent">•</span>
-          <span>{readingMinutes(post.contentHtml)} min read</span>
-        </div>
-        <h1 className="font-serif text-4xl leading-tight tracking-tight text-fg-strong sm:text-5xl">
-          {post.title}
-        </h1>
-        {post.excerpt && (
-          <p className="mt-5 text-lg leading-relaxed text-muted">
-            {post.excerpt}
-          </p>
-        )}
+      <div className="mb-5 mt-8 flex flex-wrap items-center gap-3.5">
+        {post.categories.map(({ category }, i) => (
+          <span key={category.slug} className="flex items-center gap-3.5">
+            {i > 0 && (
+              <span className="h-[3px] w-[3px] rounded-full bg-ink2" />
+            )}
+            <Link
+              href={`/${category.slug}`}
+              className="font-label text-[11px] uppercase tracking-wide text-accent"
+            >
+              {category.name}
+            </Link>
+          </span>
+        ))}
+        <span className="h-[3px] w-[3px] rounded-full bg-ink2" />
+        <span className="font-label text-[11px] tracking-wide text-ink2">
+          {date}
+        </span>
+        <span className="h-[3px] w-[3px] rounded-full bg-ink2" />
+        <span className="font-label text-[11px] tracking-wide text-ink2">
+          {readingMinutes(post.contentHtml)} min read
+        </span>
       </div>
+
+      <h1 className="m-0 mb-6 text-pretty font-serif text-[clamp(34px,5.4vw,52px)] font-normal leading-[1.06] tracking-tight text-ink">
+        {post.title}
+      </h1>
+
+      {post.excerpt && (
+        <p className="m-0 mb-11 text-pretty text-lg leading-relaxed text-ink2">
+          {post.excerpt}
+        </p>
+      )}
+
+      {image && (
+        <div className="relative mb-14 aspect-[16/9] overflow-hidden rounded-2xl border border-line bg-bg2">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={image} alt="" className="h-full w-full object-cover" />
+        </div>
+      )}
 
       <div
         className="prose"
@@ -64,10 +81,10 @@ export default async function PostPage({
       />
 
       {primary && (
-        <div className="mt-12 border-t border-border pt-6">
+        <div className="mt-14 border-t border-line pt-6">
           <Link
             href={`/${primary.slug}`}
-            className="text-sm text-muted transition-colors hover:text-accent"
+            className="font-label text-[11px] tracking-wide text-ink2 transition-colors hover:text-accent"
           >
             ← More in {primary.name}
           </Link>

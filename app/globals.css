@@ -3,113 +3,138 @@
 @tailwind utilities;
 
 /*
- * Design tokens mapped from the Claude Design "Portfolio" project.
- * Warm-toned palette (cream family) with a violet accent and a display serif.
- * Themeable three ways: default = light; system dark via prefers-color-scheme;
- * explicit override via [data-theme] set by the header toggle.
+ * Design tokens mapped from the Claude Design "Portfolio" project
+ * (Portfolio.dc.html): a near-black canvas with a violet accent and an
+ * ambient plum glow. Dark is the default; an explicit toggle stores the
+ * choice and overrides it. There is no system-preference branch — the
+ * design itself does not have one.
  */
 :root {
-  --bg: 250 249 245; /* #faf9f5 cream */
-  --bg-glow: 168 85 247; /* subtle accent glow */
-  --surface: 255 255 255;
-  --surface-2: 245 243 238;
-  --border: 232 230 223;
-  --muted: 90 87 82;
-  --fg: 26 26 25; /* #1a1a19 */
-  --fg-strong: 20 20 19;
-  --accent: 124 58 237; /* violet-600 for light bg contrast */
-  --accent-fg: 255 255 255;
+  --bg: 7 7 7; /* #070707 */
+  --bg2: 14 14 14; /* #0E0E0E */
+  --ink: 242 240 245; /* #F2F0F5 */
+  --ink2: 143 138 150; /* #8F8A96 */
+  --line: 255 255 255; /* used with low alpha for hairlines */
+  --line-a: 0.09;
+  --accent: 168 85 247; /* #A855F7 */
+  --ambient: 56 5 79; /* #38054F */
+  --ambient-a: 0.55;
+  --glow: 168 85 247;
+  --glow-a: 0.3;
+  --star: 255 255 255;
+  --halo: 168 85 247;
+  --halo-a: 0.13;
   --font-sans: var(--font-sans-var), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-serif: var(--font-serif-var), "Iowan Old Style", Georgia,
     "Times New Roman", serif;
+  --font-label: var(--font-label-var), ui-monospace, SFMono-Regular, Menlo,
+    monospace;
 }
 
-/* System dark (only when the user hasn't explicitly chosen a theme). */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: 13 11 18; /* #0d0b12 */
-    --bg-glow: 168 85 247;
-    --surface: 22 19 28;
-    --surface-2: 28 24 36;
-    --border: 40 36 48;
-    --muted: 158 152 148;
-    --fg: 240 239 236; /* #f0efec */
-    --fg-strong: 250 250 248;
-    --accent: 178 130 246; /* lighter violet for dark bg */
-    --accent-fg: 16 13 22;
-  }
-}
-
-/* Explicit dark override (toggle). */
-:root[data-theme="dark"] {
-  --bg: 13 11 18;
-  --bg-glow: 168 85 247;
-  --surface: 22 19 28;
-  --surface-2: 28 24 36;
-  --border: 40 36 48;
-  --muted: 158 152 148;
-  --fg: 240 239 236;
-  --fg-strong: 250 250 248;
-  --accent: 178 130 246;
-  --accent-fg: 16 13 22;
+:root[data-theme="light"] {
+  --bg: 251 250 252; /* #FBFAFC */
+  --bg2: 255 255 255;
+  --ink: 10 10 10; /* #0A0A0A */
+  --ink2: 96 94 104; /* #605E68 */
+  --line: 10 10 10;
+  --line-a: 0.11;
+  --accent: 91 11 123; /* #5B0B7B */
+  --ambient: 56 5 79;
+  --ambient-a: 0.1;
+  --glow: 91 11 123;
+  --glow-a: 0.16;
+  --star: 91 11 123;
+  --halo: 91 11 123;
+  --halo-a: 0.07;
 }
 
 html,
 body {
   background: rgb(var(--bg));
-  color: rgb(var(--fg));
+  color: rgb(var(--ink));
 }
 
-/* Ambient accent glow in the top-right, echoing the design's hero. */
 body {
-  background-image: radial-gradient(
-    60rem 40rem at 85% -10%,
-    rgb(var(--bg-glow) / 0.14),
-    transparent 60%
-  );
-  background-attachment: fixed;
-  background-repeat: no-repeat;
+  transition: background 420ms ease, color 420ms ease;
 }
 
-.font-serif {
-  font-family: var(--font-serif);
+::selection {
+  background: #38054f;
+  color: #fff;
 }
 
-/* Uppercase tracked eyebrow/section labels. */
+@keyframes twk {
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: scale(0.7);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+@keyframes flt {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.font-label {
+  font-family: var(--font-label);
+}
+
+/* Uppercase tracked eyebrow/section labels (Space Grotesk). */
 .eyebrow {
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
+  font-family: var(--font-label);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgb(var(--muted));
 }
 
 /* Rendered rich-text content ("prose"). */
 .prose {
-  line-height: 1.75;
-  font-size: 1.05rem;
+  line-height: 1.82;
+  font-size: 1.06rem;
+  color: rgb(var(--ink));
 }
 .prose > * + * {
-  margin-top: 1.15rem;
+  margin-top: 1.3rem;
 }
 .prose h1,
 .prose h2,
 .prose h3 {
   font-family: var(--font-serif);
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.2;
-  margin-top: 1.75rem;
-  color: rgb(var(--fg-strong));
+  letter-spacing: -0.02em;
+  margin-top: 2.4rem;
+  color: rgb(var(--ink));
 }
 .prose h1 {
   font-size: 2rem;
 }
 .prose h2 {
-  font-size: 1.6rem;
+  font-size: 1.7rem;
 }
 .prose h3 {
-  font-size: 1.3rem;
+  font-size: 1.35rem;
 }
 .prose a {
   color: rgb(var(--accent));
@@ -125,25 +150,31 @@ body {
   padding-left: 1.5rem;
 }
 .prose blockquote {
-  border-left: 2px solid rgb(var(--accent) / 0.5);
-  padding-left: 1rem;
-  color: rgb(var(--muted));
+  border-left: 2px solid rgb(var(--accent));
+  padding: 0.25rem 0 0.25rem 1.3rem;
+  font-family: var(--font-serif);
   font-style: italic;
+  font-size: 1.25rem;
+  line-height: 1.45;
+  color: rgb(var(--ink));
 }
 .prose img {
-  border-radius: 0.9rem;
+  border-radius: 0.75rem;
   margin: 1.75rem 0;
-  border: 1px solid rgb(var(--border));
+  border: 1px solid rgb(var(--line) / var(--line-a));
 }
 .prose pre {
-  background: rgb(var(--fg) / 0.06);
-  padding: 1rem;
-  border-radius: 0.6rem;
+  background: rgb(var(--bg2));
+  border: 1px solid rgb(var(--line) / var(--line-a));
+  padding: 1.1rem 1.25rem;
+  border-radius: 0.75rem;
   overflow-x: auto;
-  font-size: 0.9rem;
+  font-family: var(--font-label);
+  font-size: 0.85rem;
+  line-height: 1.7;
 }
 .prose code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: var(--font-label);
   font-size: 0.875em;
 }
 .prose table {
@@ -152,6 +183,6 @@ body {
 }
 .prose th,
 .prose td {
-  border: 1px solid rgb(var(--border));
+  border: 1px solid rgb(var(--line) / var(--line-a));
   padding: 0.5rem 0.75rem;
 }

@@ -63,10 +63,14 @@ export default function SocialLinks({
   links,
   email,
   className = "",
+  variant = "icons",
 }: {
   links: SocialLinkData[];
   email?: string | null;
   className?: string;
+  /** "icons" — round icon buttons (footer). "stacked" — a vertical list of
+   * bordered rows with icon + label (About / Contact sidebars). */
+  variant?: "icons" | "stacked";
 }) {
   const items = [...links];
   if (email) {
@@ -79,8 +83,27 @@ export default function SocialLinks({
   }
   if (items.length === 0) return null;
 
+  if (variant === "stacked") {
+    return (
+      <div className={`flex flex-col gap-2 ${className}`}>
+        {items.map((link) => (
+          <a
+            key={link.id}
+            href={link.url}
+            target={link.platform === "email" ? undefined : "_blank"}
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 rounded-[11px] border border-line px-3.5 py-3 text-ink transition-colors duration-200 hover:border-accent hover:text-accent hover:shadow-[0_0_26px_-8px_rgb(var(--glow)_/_var(--glow-a))]"
+          >
+            <Icon platform={link.platform} className="h-4 w-4 shrink-0" />
+            <span className="font-label text-xs tracking-wide">{link.label}</span>
+          </a>
+        ))}
+      </div>
+    );
+  }
+
   return (
-    <div className={`flex flex-wrap items-center gap-2 ${className}`}>
+    <div className={`flex flex-wrap items-center gap-0.5 ${className}`}>
       {items.map((link) => (
         <a
           key={link.id}
@@ -89,9 +112,9 @@ export default function SocialLinks({
           rel="noopener noreferrer"
           title={link.label}
           aria-label={link.label}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted transition-colors hover:border-accent/60 hover:text-fg"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-[11px] text-ink2 transition-colors duration-200 hover:bg-bg2 hover:text-accent hover:shadow-[0_0_22px_-6px_rgb(var(--glow)_/_var(--glow-a))]"
         >
-          <Icon platform={link.platform} className="h-[18px] w-[18px]" />
+          <Icon platform={link.platform} className="h-[17px] w-[17px]" />
         </a>
       ))}
     </div>

@@ -6,7 +6,14 @@ export const dynamic = "force-dynamic";
 export default async function CategoriesPage() {
   const categories = await prisma.category.findMany({
     orderBy: { order: "asc" },
-    include: { _count: { select: { posts: true } } },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      tagline: true,
+      description: true,
+      _count: { select: { posts: true } },
+    },
   });
 
   return (

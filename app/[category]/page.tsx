@@ -6,8 +6,11 @@ import type { ViewMode } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
-// Reserved top-level paths that are not categories.
-const RESERVED = new Set(["admin", "posts", "api"]);
+// Reserved top-level paths that are not categories. Note: "posts" is NOT
+// reserved here — `/posts` (this route, category listing) and `/posts/<slug>`
+// (single-post route) are different path shapes and don't collide, even
+// when a category happens to be named "Posts".
+const RESERVED = new Set(["admin", "api", "about", "contact"]);
 
 export default async function CategoryPage({
   params,
@@ -27,13 +30,14 @@ export default async function CategoryPage({
 
   return (
     <div>
-      <section className="mb-10 border-b border-border pb-8">
-        <p className="eyebrow mb-3">Category</p>
-        <h1 className="font-serif text-4xl tracking-tight text-fg-strong">
-          {category.name}
+      <section className="mb-10 max-w-[700px] pb-2 pt-4 sm:pt-8">
+        <p className="eyebrow mb-5 text-accent">{category.name}</p>
+        <h1 className="m-0 mb-5 text-pretty font-serif text-[clamp(38px,6vw,60px)] font-normal leading-[1.04] tracking-tight text-ink">
+          {category.tagline || category.name}
         </h1>
-        <p className="mt-2 text-muted">
-          {posts.length} {posts.length === 1 ? "item" : "items"}
+        <p className="m-0 text-pretty text-[16px] leading-[1.7] text-ink2">
+          {category.description ||
+            `${posts.length} ${posts.length === 1 ? "item" : "items"}.`}
         </p>
       </section>
 

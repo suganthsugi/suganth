@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import type { PostListItem, ViewMode } from "@/lib/types";
 import PostCard from "./PostCard";
-import PostListRow from "./PostListRow";
+import PostHoverList from "./PostHoverList";
 
 const STORAGE_KEY = "portfolio:view";
 
@@ -40,7 +40,7 @@ export default function PostListing({
 
   if (posts.length === 0) {
     return (
-      <p className="rounded-lg border border-dashed border-border p-10 text-center text-muted">
+      <p className="rounded-2xl border border-dashed border-line p-10 text-center text-ink2">
         Nothing here yet.
       </p>
     );
@@ -64,11 +64,7 @@ export default function PostListing({
           ))}
         </div>
       ) : (
-        <div className="border-t border-border">
-          {posts.map((p) => (
-            <PostListRow key={p.id} post={p} />
-          ))}
-        </div>
+        <PostHoverList posts={posts} variant="spotlight" />
       )}
     </div>
   );
@@ -87,10 +83,10 @@ function ToggleButton({
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-md px-3 py-1.5 text-sm transition-colors ${
+      className={`rounded-full px-3.5 py-1.5 font-label text-[11px] tracking-wide transition-colors ${
         active
-          ? "bg-accent text-accent-fg"
-          : "text-muted hover:bg-surface-2 hover:text-fg"
+          ? "bg-bg2 text-ink"
+          : "text-ink2 hover:text-ink"
       }`}
     >
       {children}

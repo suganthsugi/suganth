@@ -28,6 +28,9 @@ export default async function SettingsPage() {
               location: config?.location ?? "",
               bio: config?.bio ?? "",
               availability: config?.availability ?? "",
+              currentRole: config?.currentRole ?? "",
+              tools: config?.tools ?? "",
+              aboutHtml: config?.aboutHtml ?? "",
             }}
           />
         </div>

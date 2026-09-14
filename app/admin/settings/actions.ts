@@ -19,6 +19,9 @@ const schema = z.object({
   location: z.string().trim().max(120).optional(),
   bio: z.string().trim().max(600).optional(),
   availability: z.string().trim().max(60).optional(),
+  currentRole: z.string().trim().max(120).optional(),
+  tools: z.string().trim().max(300).optional(),
+  aboutHtml: z.string().trim().max(20000).optional(),
 });
 
 export type SettingsState = { error?: string; ok?: boolean };
@@ -36,6 +39,9 @@ export async function updateSettings(
     location: formData.get("location") ?? "",
     bio: formData.get("bio") ?? "",
     availability: formData.get("availability") ?? "",
+    currentRole: formData.get("currentRole") ?? "",
+    tools: formData.get("tools") ?? "",
+    aboutHtml: formData.get("aboutHtml") ?? "",
   });
   if (!parsed.success) return { error: parsed.error.issues[0].message };
 
@@ -48,6 +54,9 @@ export async function updateSettings(
     location: parsed.data.location || null,
     bio: parsed.data.bio || null,
     availability: parsed.data.availability || null,
+    currentRole: parsed.data.currentRole || null,
+    tools: parsed.data.tools || null,
+    aboutHtml: parsed.data.aboutHtml || null,
   };
 
   await prisma.siteConfig.upsert({

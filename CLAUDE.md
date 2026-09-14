@@ -57,12 +57,16 @@ docker compose -f docker-compose.prod.yml up --build
   HTML), `slug.ts`, `posts.ts` (public queries + `toListItem` mapper),
   `types.ts`.
 - `app/` (public) — `page.tsx` (home), `[category]/page.tsx` (category listing
-  with toggle), `posts/[slug]/page.tsx` (single post).
+  with toggle), `posts/[slug]/page.tsx` (single post), `about/page.tsx`,
+  `contact/page.tsx`.
 - `app/admin/` — `layout.tsx` (shell + sign out), `page.tsx` (dashboard),
   `login/`, `categories/`, `posts/` (list, `new/`, `[id]/edit/`), `settings/`.
   All mutations are **server actions** in the respective `actions.ts` files.
-- `components/` — `PostListing.tsx` (client toggle), `PostCard.tsx`,
-  `PostListRow.tsx`, `editor/RichTextEditor.tsx`.
+- `components/` — `PostListing.tsx` (client card/list toggle), `PostCard.tsx`
+  (grid card), `PostHoverList.tsx` (spotlight/thin row lists with the
+  cursor-following image preview), `Starfield.tsx` (ambient background +
+  cursor spotlight), `ContactForm.tsx`, `ThemeToggle.tsx`, `SocialLinks.tsx`,
+  `editor/RichTextEditor.tsx`.
 
 ## Admin
 
@@ -84,12 +88,23 @@ Sign in at `/admin/login`; `/admin` is the dashboard.
 - Public pages use `export const dynamic = "force-dynamic"` so new content shows
   immediately; server actions also `revalidatePath("/", "layout")`.
 
-## Design integration (pending)
+## Design integration
 
-The frontend is a clean baseline intended to be reskinned to the Claude Design
-project `Portfolio.dc.html`
-(`claude.ai/design/p/86ff4831-3542-443c-b756-1fc21ee8be86`). To import it, run
-`/design-login` in an interactive Claude Code terminal, then read the design via
-the `DesignSync` tool (`get_file` on `Portfolio.dc.html` and `support.js`) and
-map its tokens into `app/globals.css` + `tailwind.config.ts` and its components
-into `components/`.
+The frontend is reskinned to the Claude Design project `Portfolio.dc.html`
+(`claude.ai/design/p/86ff4831-3542-443c-b756-1fc21ee8be86`): a dark, near-black
+canvas with a violet accent, an ambient plum hero glow, a cursor-tracked
+starfield/spotlight background, and Petrona (serif) / Manrope (body) / Space
+Grotesk (labels) type. Dark is the default theme; `ThemeToggle` stores an
+explicit override in `localStorage` (no system-preference branch — the source
+design doesn't have one). Tokens live in `app/globals.css` (`--bg`, `--bg2`,
+`--ink`, `--ink2`, `--line`, `--accent`, `--ambient`, `--glow`, `--star`,
+`--halo`) and are wired into `tailwind.config.ts`.
+
+The design's About/Contact copy and "Currently/Tools" panel are illustrative —
+real content comes from `SiteConfig` (`bio`, `aboutHtml`, `currentRole`,
+`tools`, `availability`, …), editable in admin Settings, and panels hide
+themselves when empty rather than showing fabricated placeholder content.
+
+To re-sync with a newer version of the design, run `/design-login`
+interactively, then read it via the `DesignSync` tool (`get_file` on
+`Portfolio.dc.html` and `support.js`).

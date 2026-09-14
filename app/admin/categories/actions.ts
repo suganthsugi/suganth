@@ -37,6 +37,33 @@ export async function createCategory(
   return { ok: true };
 }
 
+const copySchema = z.object({
+  tagline: z.string().trim().max(160).optional(),
+  description: z.string().trim().max(300).optional(),
+});
+
+export async function updateCategoryCopy(formData: FormData): Promise<void> {
+  const id = String(formData.get("id") ?? "");
+  if (!id) return;
+
+  const parsed = copySchema.safeParse({
+    tagline: formData.get("tagline") ?? "",
+    description: formData.get("description") ?? "",
+  });
+  if (!parsed.success) return;
+
+  await prisma.category.update({
+    where: { id },
+    data: {
+      tagline: parsed.data.tagline || null,
+      description: parsed.data.description || null,
+    },
+  });
+
+  revalidatePath("/admin/categories");
+  revalidatePath("/", "layout");
+}
+
 export async function deleteCategory(formData: FormData): Promise<void> {
   const id = String(formData.get("id") ?? "");
   if (!id) return;

@@ -4,18 +4,15 @@ import { useEffect, useState } from "react";
 
 type Theme = "light" | "dark";
 
-/** Resolve the currently-applied theme from the DOM / system. */
+/** Resolve the currently-applied theme from the DOM. Default is dark. */
 function currentTheme(): Theme {
-  if (typeof document === "undefined") return "light";
+  if (typeof document === "undefined") return "dark";
   const explicit = document.documentElement.dataset.theme;
-  if (explicit === "light" || explicit === "dark") return explicit;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
+  return explicit === "light" ? "light" : "dark";
 }
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>("light");
+  const [theme, setTheme] = useState<Theme>("dark");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -44,17 +41,17 @@ export default function ThemeToggle() {
       onClick={toggle}
       aria-label="Toggle color theme"
       title="Toggle theme"
-      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted transition-colors hover:border-accent/60 hover:text-fg"
+      className="ml-1 grid h-10 w-10 shrink-0 place-items-center rounded-full border border-line text-ink2 transition-colors duration-200 hover:border-accent hover:text-accent hover:shadow-[0_0_18px_rgb(var(--glow)_/_var(--glow-a))]"
     >
       {/* Render a stable icon until mounted to avoid hydration mismatch. */}
       {mounted && isDark ? (
-        <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="4" />
-          <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7Z" />
         </svg>
       ) : (
-        <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.2" />
+          <path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4 17 7M7 17l-1.6 1.6" />
         </svg>
       )}
     </button>

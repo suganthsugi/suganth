@@ -18,12 +18,16 @@ model User {
 
 /// Configurable content categories (e.g. "posts", "projects").
 model Category {
-  id        String         @id @default(cuid())
-  name      String         @unique
-  slug      String         @unique
-  order     Int            @default(0)
-  createdAt DateTime       @default(now())
-  posts     PostCategory[]
+  id          String         @id @default(cuid())
+  name        String         @unique
+  slug        String         @unique
+  order       Int            @default(0)
+  // Optional listing-page copy — headline + blurb shown above the list.
+  // Both fall back gracefully when blank (see app/[category]/page.tsx).
+  tagline     String?
+  description String?
+  createdAt   DateTime       @default(now())
+  posts       PostCategory[]
 
   @@index([order])
 }
@@ -68,6 +72,10 @@ model SiteConfig {
   location     String?
   bio          String? // longer hero paragraph under the tagline
   availability String? // e.g. "Available for work"; shows the hero badge when set
+  // About page — all optional, all blank by default (no fabricated content).
+  aboutHtml    String? // rich-text body for the About page
+  currentRole  String? // e.g. "Senior engineer, platform team"
+  tools        String? // comma-separated, e.g. "Go, TypeScript, Postgres"
   updatedAt    DateTime @updatedAt
 }
 

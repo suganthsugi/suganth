@@ -15,6 +15,9 @@ export default function SettingsForm({
     location: string;
     bio: string;
     availability: string;
+    currentRole: string;
+    tools: string;
+    aboutHtml: string;
   };
 }) {
   const [state, formAction, pending] = useActionState<SettingsState, FormData>(
@@ -112,6 +115,47 @@ export default function SettingsForm({
           defaultValue={initial.email}
           placeholder="you@example.com"
           className="mt-1 w-full rounded-md border border-border bg-surface px-3 py-2 outline-none focus:border-accent"
+        />
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label htmlFor="currentRole" className="block text-sm font-medium">
+            About: current role
+          </label>
+          <input
+            id="currentRole"
+            name="currentRole"
+            defaultValue={initial.currentRole}
+            placeholder="Senior engineer, platform team"
+            className="mt-1 w-full rounded-md border border-border bg-surface px-3 py-2 outline-none focus:border-accent"
+          />
+        </div>
+        <div>
+          <label htmlFor="tools" className="block text-sm font-medium">
+            About: tools
+          </label>
+          <input
+            id="tools"
+            name="tools"
+            defaultValue={initial.tools}
+            placeholder="Go, TypeScript, Postgres"
+            className="mt-1 w-full rounded-md border border-border bg-surface px-3 py-2 outline-none focus:border-accent"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label htmlFor="aboutHtml" className="block text-sm font-medium">
+          About page body{" "}
+          <span className="text-muted">(HTML — blank falls back to your bio)</span>
+        </label>
+        <textarea
+          id="aboutHtml"
+          name="aboutHtml"
+          defaultValue={initial.aboutHtml}
+          rows={5}
+          className="mt-1 w-full rounded-md border border-border bg-surface px-3 py-2 font-mono text-xs outline-none focus:border-accent"
         />
       </div>
 
