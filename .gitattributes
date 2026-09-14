@@ -1,0 +1,7 @@
+# Keep shell scripts LF so they run inside Linux containers.
+*.sh text eol=lf
+docker-entrypoint.sh text eol=lf
+Dockerfile text eol=lf
+
+# Normalize everything else to LF in the repo.
+* text=auto eol=lf
