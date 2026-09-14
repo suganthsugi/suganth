@@ -27,3 +27,9 @@ export function makeExcerpt(html: string | null | undefined, max = 160): string 
   if (text.length <= max) return text;
   return text.slice(0, max).replace(/\s+\S*$/, "") + "…";
 }
+
+/** Estimated reading time in minutes (min 1) from HTML content. */
+export function readingMinutes(html: string | null | undefined): number {
+  const words = stripHtml(html).split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / 200));
+}

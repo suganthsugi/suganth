@@ -17,6 +17,8 @@ const schema = z.object({
     .optional()
     .or(z.literal("")),
   location: z.string().trim().max(120).optional(),
+  bio: z.string().trim().max(600).optional(),
+  availability: z.string().trim().max(60).optional(),
 });
 
 export type SettingsState = { error?: string; ok?: boolean };
@@ -32,6 +34,8 @@ export async function updateSettings(
     ownerName: formData.get("ownerName") ?? "",
     email: formData.get("email") ?? "",
     location: formData.get("location") ?? "",
+    bio: formData.get("bio") ?? "",
+    availability: formData.get("availability") ?? "",
   });
   if (!parsed.success) return { error: parsed.error.issues[0].message };
 
@@ -42,6 +46,8 @@ export async function updateSettings(
     ownerName: parsed.data.ownerName || null,
     email: parsed.data.email || null,
     location: parsed.data.location || null,
+    bio: parsed.data.bio || null,
+    availability: parsed.data.availability || null,
   };
 
   await prisma.siteConfig.upsert({

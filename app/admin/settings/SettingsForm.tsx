@@ -13,6 +13,8 @@ export default function SettingsForm({
     ownerName: string;
     email: string;
     location: string;
+    bio: string;
+    availability: string;
   };
 }) {
   const [state, formAction, pending] = useActionState<SettingsState, FormData>(
@@ -36,13 +38,39 @@ export default function SettingsForm({
 
       <div>
         <label htmlFor="description" className="block text-sm font-medium">
-          Description
+          Tagline <span className="text-muted">(hero headline)</span>
         </label>
         <textarea
           id="description"
           name="description"
           defaultValue={initial.description}
+          rows={2}
+          className="mt-1 w-full rounded-md border border-border bg-surface px-3 py-2 outline-none focus:border-accent"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="bio" className="block text-sm font-medium">
+          Bio <span className="text-muted">(paragraph under the headline)</span>
+        </label>
+        <textarea
+          id="bio"
+          name="bio"
+          defaultValue={initial.bio}
           rows={3}
+          className="mt-1 w-full rounded-md border border-border bg-surface px-3 py-2 outline-none focus:border-accent"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="availability" className="block text-sm font-medium">
+          Availability badge{" "}
+          <span className="text-muted">(e.g. “Available for work” — blank to hide)</span>
+        </label>
+        <input
+          id="availability"
+          name="availability"
+          defaultValue={initial.availability}
           className="mt-1 w-full rounded-md border border-border bg-surface px-3 py-2 outline-none focus:border-accent"
         />
       </div>

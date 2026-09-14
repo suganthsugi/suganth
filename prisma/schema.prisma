@@ -63,10 +63,12 @@ model SiteConfig {
   description String   @default("A configurable portfolio.")
   defaultView String   @default("card") // "card" | "list"
   // Personal / contact details — all optional, all editable in admin settings.
-  ownerName   String?
-  email       String?
-  location    String?
-  updatedAt   DateTime @updatedAt
+  ownerName    String?
+  email        String?
+  location     String?
+  bio          String? // longer hero paragraph under the tagline
+  availability String? // e.g. "Available for work"; shows the hero badge when set
+  updatedAt    DateTime @updatedAt
 }
 
 /// Configurable personal/social links (GitHub, LinkedIn, X, website, …).

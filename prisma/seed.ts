@@ -37,9 +37,10 @@ async function main() {
     create: {
       id: "singleton",
       title: "My Portfolio",
-      description: "Projects, posts, and things I've built.",
+      description: "I build things for the web.",
       defaultView: "card",
       email,
+      availability: "Available for work",
     },
   });
   console.log("✓ Site config ready");

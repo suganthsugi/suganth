@@ -27,10 +27,21 @@ export default function RichTextEditor({
   useEffect(() => {
     setMounted(true);
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    setDark(mq.matches);
-    const onChangeScheme = (e: MediaQueryListEvent) => setDark(e.matches);
-    mq.addEventListener("change", onChangeScheme);
-    return () => mq.removeEventListener("change", onChangeScheme);
+    // Effective theme: explicit [data-theme] override wins over the system pref.
+    const resolve = () => {
+      const explicit = document.documentElement.dataset.theme;
+      if (explicit === "dark") return true;
+      if (explicit === "light") return false;
+      return mq.matches;
+    };
+    setDark(resolve());
+    const update = () => setDark(resolve());
+    mq.addEventListener("change", update);
+    window.addEventListener("themechange", update);
+    return () => {
+      mq.removeEventListener("change", update);
+      window.removeEventListener("themechange", update);
+    };
   }, []);
 
   if (!mounted) {

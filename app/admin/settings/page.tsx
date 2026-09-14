@@ -26,6 +26,8 @@ export default async function SettingsPage() {
               ownerName: config?.ownerName ?? "",
               email: config?.email ?? "",
               location: config?.location ?? "",
+              bio: config?.bio ?? "",
+              availability: config?.availability ?? "",
             }}
           />
         </div>

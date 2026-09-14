@@ -51,3 +51,36 @@ export async function getPostsByCategory(slug: string): Promise<PostListItem[]> 
   });
   return posts.map(toListItem);
 }
+
+export type HomeSection = {
+  name: string;
+  slug: string;
+  total: number;
+  posts: PostListItem[];
+};
+
+/**
+ * One section per category that has published posts, each with its most recent
+ * few items and a total count — powers the home page's "Selected …" sections.
+ */
+export async function getHomeSections(perSection = 4): Promise<HomeSection[]> {
+  const categories = await prisma.category.findMany({
+    orderBy: { order: "asc" },
+    include: {
+      posts: {
+        where: { post: { published: true } },
+        include: { post: { include: listInclude } },
+        orderBy: { post: { createdAt: "desc" } },
+      },
+    },
+  });
+
+  return categories
+    .map((c) => ({
+      name: c.name,
+      slug: c.slug,
+      total: c.posts.length,
+      posts: c.posts.slice(0, perSection).map((pc) => toListItem(pc.post)),
+    }))
+    .filter((s) => s.total > 0);
+}

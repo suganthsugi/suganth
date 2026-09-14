@@ -27,9 +27,12 @@ export default async function CategoryPage({
 
   return (
     <div>
-      <section className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">{category.name}</h1>
-        <p className="mt-1 text-muted">
+      <section className="mb-10 border-b border-border pb-8">
+        <p className="eyebrow mb-3">Category</p>
+        <h1 className="font-serif text-4xl tracking-tight text-fg-strong">
+          {category.name}
+        </h1>
+        <p className="mt-2 text-muted">
           {posts.length} {posts.length === 1 ? "item" : "items"}
         </p>
       </section>

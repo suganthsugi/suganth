@@ -48,7 +48,7 @@ export default function PostListing({
 
   return (
     <div>
-      <div className="mb-5 flex items-center justify-end gap-1">
+      <div className="mb-6 flex items-center justify-end gap-1">
         <ToggleButton active={view === "card"} onClick={() => choose("card")}>
           Cards
         </ToggleButton>
@@ -64,7 +64,7 @@ export default function PostListing({
           ))}
         </div>
       ) : (
-        <div className="flex flex-col gap-3">
+        <div className="border-t border-border">
           {posts.map((p) => (
             <PostListRow key={p.id} post={p} />
           ))}
@@ -90,7 +90,7 @@ function ToggleButton({
       className={`rounded-md px-3 py-1.5 text-sm transition-colors ${
         active
           ? "bg-accent text-accent-fg"
-          : "text-muted hover:bg-fg/5 hover:text-fg"
+          : "text-muted hover:bg-surface-2 hover:text-fg"
       }`}
     >
       {children}
