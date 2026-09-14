@@ -62,5 +62,22 @@ model SiteConfig {
   title       String   @default("My Portfolio")
   description String   @default("A configurable portfolio.")
   defaultView String   @default("card") // "card" | "list"
+  // Personal / contact details — all optional, all editable in admin settings.
+  ownerName   String?
+  email       String?
+  location    String?
   updatedAt   DateTime @updatedAt
+}
+
+/// Configurable personal/social links (GitHub, LinkedIn, X, website, …).
+/// Fully CRUD-able in admin so any "other stuff" can be added or removed.
+model SocialLink {
+  id       String   @id @default(cuid())
+  label    String // e.g. "GitHub", "LinkedIn", "Resume"
+  url      String
+  platform String   @default("link") // icon hint: github|linkedin|twitter|instagram|youtube|website|email|link
+  order    Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([order])
 }

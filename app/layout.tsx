@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
 import { prisma } from "@/lib/prisma";
+import SocialLinks from "@/components/SocialLinks";
 
 async function getConfig() {
   try {
@@ -14,6 +15,14 @@ async function getConfig() {
 async function getCategories() {
   try {
     return await prisma.category.findMany({ orderBy: { order: "asc" } });
+  } catch {
+    return [];
+  }
+}
+
+async function getSocialLinks() {
+  try {
+    return await prisma.socialLink.findMany({ orderBy: { order: "asc" } });
   } catch {
     return [];
   }
@@ -32,9 +41,10 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [config, categories] = await Promise.all([
+  const [config, categories, socialLinks] = await Promise.all([
     getConfig(),
     getCategories(),
+    getSocialLinks(),
   ]);
 
   return (
@@ -70,8 +80,13 @@ export default async function RootLayout({
         </main>
 
         <footer className="border-t border-border">
-          <div className="mx-auto max-w-5xl px-4 py-6 text-sm text-muted">
-            © {new Date().getFullYear()} {config?.title ?? "Portfolio"}
+          <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-8 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-sm text-muted">
+              © {new Date().getFullYear()}{" "}
+              {config?.ownerName || config?.title || "Portfolio"}
+              {config?.location ? ` · ${config.location}` : ""}
+            </div>
+            <SocialLinks links={socialLinks} email={config?.email} />
           </div>
         </footer>
       </body>

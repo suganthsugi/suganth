@@ -39,6 +39,7 @@ async function main() {
       title: "My Portfolio",
       description: "Projects, posts, and things I've built.",
       defaultView: "card",
+      email,
     },
   });
   console.log("✓ Site config ready");

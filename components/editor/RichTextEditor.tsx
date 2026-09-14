@@ -21,7 +21,17 @@ export default function RichTextEditor({
   // Render client-only: the TinyMCE wrapper assigns a random textarea id, which
   // otherwise causes a server/client hydration mismatch.
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  // Follow the site's color scheme (driven by prefers-color-scheme).
+  const [dark, setDark] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    setDark(mq.matches);
+    const onChangeScheme = (e: MediaQueryListEvent) => setDark(e.matches);
+    mq.addEventListener("change", onChangeScheme);
+    return () => mq.removeEventListener("change", onChangeScheme);
+  }, []);
 
   if (!mounted) {
     return (
@@ -33,6 +43,8 @@ export default function RichTextEditor({
 
   return (
     <Editor
+      // Re-mount when the theme flips so the new skin/content CSS applies.
+      key={dark ? "dark" : "light"}
       // Load TinyMCE locally instead of Tiny Cloud.
       tinymceScriptSrc="/tinymce/tinymce.min.js"
       licenseKey="gpl"
@@ -74,13 +86,14 @@ export default function RichTextEditor({
         // The editor renders inside an iframe; style its content to roughly
         // match the site's reading typography.
         content_style:
-          "body{font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:16px;line-height:1.7;padding:8px 12px} img{max-width:100%;height:auto;border-radius:12px} pre{background:#1113;padding:12px;border-radius:8px;overflow:auto}",
+          "body{font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:16px;line-height:1.7;padding:8px 12px} img{max-width:100%;height:auto;border-radius:12px} pre{background:#8881;padding:12px;border-radius:8px;overflow:auto}",
         image_caption: true,
         image_title: true,
         // Allow pasting/inserting images as data URIs (no upload backend needed).
         paste_data_images: true,
-        skin: "oxide",
-        content_css: "default",
+        // Theme-aware skin + content CSS.
+        skin: dark ? "oxide-dark" : "oxide",
+        content_css: dark ? "dark" : "default",
       }}
     />
   );
