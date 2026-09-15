@@ -100,8 +100,40 @@ export default function RichTextEditor({
           "body{font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:16px;line-height:1.7;padding:8px 12px} img{max-width:100%;height:auto;border-radius:12px} pre{background:#8881;padding:12px;border-radius:8px;overflow:auto}",
         image_caption: true,
         image_title: true,
-        // Allow pasting/inserting images as data URIs (no upload backend needed).
+        // --- Image upload/paste without a storage backend ---
+        // There is no file server, so every image is inlined into the post
+        // HTML as a base64 data URI (the same approach the avatar uploader
+        // uses). This turns on the dialog's "Upload" tab, drag-and-drop, and
+        // clipboard paste; large images make the stored HTML bigger, so prefer
+        // reasonably sized images.
         paste_data_images: true,
+        automatic_uploads: true,
+        image_uploadtab: true,
+        images_upload_handler: (blobInfo) =>
+          new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.onerror = () => reject(new Error("Could not read image"));
+            reader.readAsDataURL(blobInfo.blob());
+          }),
+        // "Browse" button next to the Source URL field: pick a local image and
+        // inline it as a data URI.
+        file_picker_types: "image",
+        file_picker_callback: (cb, _value, meta) => {
+          if (meta.filetype !== "image") return;
+          const input = document.createElement("input");
+          input.type = "file";
+          input.accept = "image/*";
+          input.onchange = () => {
+            const file = input.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onloadend = () =>
+              cb(reader.result as string, { title: file.name });
+            reader.readAsDataURL(file);
+          };
+          input.click();
+        },
         // Theme-aware skin + content CSS.
         skin: dark ? "oxide-dark" : "oxide",
         content_css: dark ? "dark" : "default",
