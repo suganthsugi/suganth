@@ -191,14 +191,14 @@ export default function PostHoverList({
           }}
         >
           <div className="overflow-hidden rounded-xl border border-line bg-bg2 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.8)]">
-            <div className="relative aspect-[16/10] overflow-hidden bg-bg">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={peek.image}
-                alt=""
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-            </div>
+            {/* Show the whole image (no crop): fit to width at natural aspect,
+                capped in height so very tall images stay a reasonable size. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={peek.image}
+              alt=""
+              className="block max-h-[260px] w-full bg-bg object-contain"
+            />
             <p className="m-0 truncate px-3 py-2.5 font-label text-[10px] text-ink2">
               {peek.post.title}
             </p>
