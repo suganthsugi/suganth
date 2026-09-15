@@ -132,6 +132,11 @@ export default function RichTextEditor({
         paste_data_images: false,
         automatic_uploads: true,
         image_uploadtab: true,
+        // Keep the root-absolute /api/uploads/<id> URL the uploader returns.
+        // Without this TinyMCE rewrites it to a fragile page-relative path
+        // (e.g. ../../../api/uploads/…) that breaks across page depths.
+        relative_urls: false,
+        convert_urls: false,
         images_upload_handler: (blobInfo) =>
           uploadImage(blobInfo.blob(), blobInfo.filename()),
         file_picker_types: "image",
