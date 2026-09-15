@@ -85,6 +85,12 @@ Sign in at `/admin/login`; `/admin` is the dashboard.
 
 - Post content is stored as **HTML** (`Post.contentHtml`) — TinyMCE output.
   Do not add a cover-image column; derive images from content.
+- Editor image uploads (drag/drop, the dialog's Upload tab, paste) POST to
+  `app/api/uploads/` (admin-only), which writes the file to `UPLOADS_DIR`
+  (`lib/uploads.ts`; a mounted volume `/app/uploads` in prod) and returns a
+  `/api/uploads/<id>` URL served by `app/api/uploads/[name]/route.ts`. The post
+  HTML references that URL — images are **not** inlined. This is separate from
+  the avatar, which stays a small downscaled data: URI on `SiteConfig`.
 - TinyMCE is self-hosted: `scripts/copy-tinymce.mjs` vendors
   `node_modules/tinymce` → `public/tinymce` on `postinstall`/`build`. That dir is
   gitignored and regenerated; the editor loads it via `tinymceScriptSrc`.

@@ -32,6 +32,11 @@ services:
       ADMIN_EMAIL: ${ADMIN_EMAIL:-suganthjayanthi@gmail.com}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-abcd1234}
       NODE_ENV: production
+      # Post images uploaded in the editor are stored here (on the volume
+      # below) and served from /api/uploads, so they survive rebuilds.
+      UPLOADS_DIR: /app/uploads
+    volumes:
+      - uploads-data:/app/uploads
     ports:
       # Host binding is configurable so the app can sit behind a reverse proxy
       # on a non-default port without clashing with other services. Defaults
@@ -41,3 +46,4 @@ services:
 
 volumes:
   postgres-data:
+  uploads-data:

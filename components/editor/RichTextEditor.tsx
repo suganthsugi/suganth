@@ -4,6 +4,28 @@ import { useEffect, useRef, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import type { Editor as TinyMCEEditor } from "tinymce";
 
+/** Upload one image to /api/uploads and resolve the stored URL. Rejects with a
+ * message TinyMCE surfaces to the user (and `remove` drops the failed image). */
+async function uploadImage(blob: Blob, filename: string): Promise<string> {
+  const body = new FormData();
+  body.append("file", blob, filename);
+  let res: Response;
+  try {
+    res = await fetch("/api/uploads", { method: "POST", body });
+  } catch {
+    return Promise.reject({ message: "Network error during upload.", remove: true });
+  }
+  if (!res.ok) {
+    const detail = await res.json().catch(() => ({}));
+    return Promise.reject({
+      message: detail?.error ?? `Upload failed (${res.status}).`,
+      remove: true,
+    });
+  }
+  const json = await res.json();
+  return json.location as string;
+}
+
 /**
  * Self-hosted TinyMCE rich-text editor (loaded from /public/tinymce — no API
  * key, no external CDN). Emits HTML via onChange. Images inserted here are what
@@ -100,24 +122,18 @@ export default function RichTextEditor({
           "body{font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:16px;line-height:1.7;padding:8px 12px} img{max-width:100%;height:auto;border-radius:12px} pre{background:#8881;padding:12px;border-radius:8px;overflow:auto}",
         image_caption: true,
         image_title: true,
-        // --- Image upload/paste without a storage backend ---
-        // There is no file server, so every image is inlined into the post
-        // HTML as a base64 data URI (the same approach the avatar uploader
-        // uses). This turns on the dialog's "Upload" tab, drag-and-drop, and
-        // clipboard paste; large images make the stored HTML bigger, so prefer
-        // reasonably sized images.
-        paste_data_images: true,
+        // --- Image upload/paste (stored server-side, referenced by URL) ---
+        // Uploaded, dropped and pasted images POST to /api/uploads, which
+        // stores the file and returns its URL; the editor inserts that URL as
+        // the image src rather than inlining a large base64 data URI. This
+        // enables the dialog's "Upload" tab, drag-and-drop, clipboard paste,
+        // and the Source-field browse button. `paste_data_images` stays off so
+        // pastes go through automatic_uploads → the handler → the server.
+        paste_data_images: false,
         automatic_uploads: true,
         image_uploadtab: true,
         images_upload_handler: (blobInfo) =>
-          new Promise<string>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result as string);
-            reader.onerror = () => reject(new Error("Could not read image"));
-            reader.readAsDataURL(blobInfo.blob());
-          }),
-        // "Browse" button next to the Source URL field: pick a local image and
-        // inline it as a data URI.
+          uploadImage(blobInfo.blob(), blobInfo.filename()),
         file_picker_types: "image",
         file_picker_callback: (cb, _value, meta) => {
           if (meta.filetype !== "image") return;
@@ -127,10 +143,10 @@ export default function RichTextEditor({
           input.onchange = () => {
             const file = input.files?.[0];
             if (!file) return;
-            const reader = new FileReader();
-            reader.onloadend = () =>
-              cb(reader.result as string, { title: file.name });
-            reader.readAsDataURL(file);
+            uploadImage(file, file.name).then(
+              (location) => cb(location, { title: file.name }),
+              (err) => window.alert(err?.message ?? "Upload failed"),
+            );
           };
           input.click();
         },
