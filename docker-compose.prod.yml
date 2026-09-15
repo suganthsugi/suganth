@@ -33,7 +33,11 @@ services:
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-abcd1234}
       NODE_ENV: production
     ports:
-      - "3000:3000"
+      # Host binding is configurable so the app can sit behind a reverse proxy
+      # on a non-default port without clashing with other services. Defaults
+      # preserve the original 0.0.0.0:3000. Behind nginx, set e.g.
+      # APP_HOST=127.0.0.1 and APP_PORT=3002 in the env file.
+      - "${APP_HOST:-0.0.0.0}:${APP_PORT:-3000}:3000"
 
 volumes:
   postgres-data:
