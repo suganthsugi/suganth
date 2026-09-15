@@ -98,9 +98,11 @@ The frontend is reskinned to the Claude Design project `Portfolio.dc.html`
 (`claude.ai/design/p/86ff4831-3542-443c-b756-1fc21ee8be86`): a dark, near-black
 canvas with a violet accent, an ambient plum hero glow, a cursor-tracked
 starfield/spotlight background, and Petrona (serif) / Manrope (body) / Space
-Grotesk (labels) type. Dark is the default theme; `ThemeToggle` stores an
-explicit override in `localStorage` (no system-preference branch — the source
-design doesn't have one). Tokens live in `app/globals.css` (`--bg`, `--bg2`,
+Grotesk (labels) type. On load the theme follows the OS `prefers-color-scheme`
+(resolved before paint by an inline script in `app/layout.tsx`, defaulting to
+dark); `ThemeToggle` stores an explicit override in `localStorage` that wins
+over the system preference, and tracks live OS changes while no override is
+stored. Tokens live in `app/globals.css` (`--bg`, `--bg2`,
 `--ink`, `--ink2`, `--line`, `--accent`, `--ambient`, `--glow`, `--star`,
 `--halo`) and are wired into `tailwind.config.ts`.
 

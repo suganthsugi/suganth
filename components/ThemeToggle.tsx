@@ -18,6 +18,25 @@ export default function ThemeToggle() {
   useEffect(() => {
     setMounted(true);
     setTheme(currentTheme());
+
+    // Follow the OS theme live, but only while the visitor hasn't made an
+    // explicit choice (nothing stored). Once they toggle, that choice wins.
+    const mq = window.matchMedia("(prefers-color-scheme: light)");
+    const onSystemChange = (e: MediaQueryListEvent) => {
+      let stored: string | null = null;
+      try {
+        stored = localStorage.getItem("theme");
+      } catch {
+        /* ignore */
+      }
+      if (stored === "light" || stored === "dark") return;
+      const next: Theme = e.matches ? "light" : "dark";
+      document.documentElement.dataset.theme = next;
+      setTheme(next);
+      window.dispatchEvent(new CustomEvent("themechange", { detail: next }));
+    };
+    mq.addEventListener("change", onSystemChange);
+    return () => mq.removeEventListener("change", onSystemChange);
   }, []);
 
   function toggle() {

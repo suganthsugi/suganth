@@ -5,11 +5,12 @@
 /*
  * Design tokens mapped from the Claude Design "Portfolio" project
  * (Portfolio.dc.html): a near-black canvas with a violet accent and an
- * ambient plum glow. Dark is the default; an explicit toggle stores the
- * choice and overrides it. There is no system-preference branch — the
- * design itself does not have one.
+ * ambient plum glow. On load the theme follows the OS `prefers-color-scheme`
+ * (defaulting to dark, the design's native look); an explicit toggle stores
+ * the choice in localStorage and overrides the system preference.
  */
 :root {
+  color-scheme: dark;
   --bg: 7 7 7; /* #070707 */
   --bg2: 14 14 14; /* #0E0E0E */
   --ink: 242 240 245; /* #F2F0F5 */
@@ -33,6 +34,7 @@
 }
 
 :root[data-theme="light"] {
+  color-scheme: light;
   --bg: 251 250 252; /* #FBFAFC */
   --bg2: 255 255 255;
   --ink: 10 10 10; /* #0A0A0A */

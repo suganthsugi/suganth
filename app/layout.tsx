@@ -60,9 +60,10 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-// Applies the saved theme before paint to avoid a flash of the wrong palette.
-// Default is dark — the design has no system-preference branch.
-const themeScript = `(function(){try{var t=localStorage.getItem('theme');if(t==='light'){document.documentElement.dataset.theme='light';}}catch(e){}})();`;
+// Applies the theme before paint to avoid a flash of the wrong palette.
+// An explicit saved choice wins; otherwise follow the OS `prefers-color-scheme`
+// (defaulting to dark, the design's native look).
+const themeScript = `(function(){try{var t=localStorage.getItem('theme');if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';}document.documentElement.dataset.theme=t;}catch(e){}})();`;
 
 const navLinkClass =
   "inline-flex min-h-11 items-center rounded-full px-[13px] py-2 font-label text-[13px] tracking-wide text-ink2 transition-colors duration-200 hover:bg-bg2 hover:text-ink";
