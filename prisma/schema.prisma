@@ -102,3 +102,17 @@ model SocialLink {
 
   @@index([order])
 }
+
+/// A message submitted through the public contact form. Persisted so nothing is
+/// lost if delivery (email via Resend) fails; `delivered` records whether the
+/// notification was accepted. Reviewable in admin → Messages.
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  delivered Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}

@@ -91,6 +91,13 @@ Sign in at `/admin/login`; `/admin` is the dashboard.
   `/api/uploads/<id>` URL served by `app/api/uploads/[name]/route.ts`. The post
   HTML references that URL — images are **not** inlined. This is separate from
   the avatar, which stays a small downscaled data: URI on `SiteConfig`.
+- The contact form (`components/ContactForm.tsx`) posts to the `submitContact`
+  server action (`app/contact/actions.ts`): it validates (zod), drops bots via a
+  honeypot, rate-limits per IP, saves a `ContactMessage` row, then delivers via
+  `notifyContact` (`lib/mailer.ts`) — email through Resend to `SiteConfig.email`
+  (`RESEND_API_KEY` + `CONTACT_FROM` env). Messages are always saved (visible in
+  admin → **Messages**) even if email is unconfigured/fails. `notifyContact` is
+  the fan-out seam for adding WhatsApp later. No more `mailto:`.
 - TinyMCE is self-hosted: `scripts/copy-tinymce.mjs` vendors
   `node_modules/tinymce` → `public/tinymce` on `postinstall`/`build`. That dir is
   gitignored and regenerated; the editor loads it via `tinymceScriptSrc`.

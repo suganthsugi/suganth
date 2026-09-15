@@ -35,6 +35,11 @@ services:
       # Post images uploaded in the editor are stored here (on the volume
       # below) and served from /api/uploads, so they survive rebuilds.
       UPLOADS_DIR: /app/uploads
+      # Contact-form email delivery (Resend). Unset ⇒ messages are still saved
+      # to the DB but not emailed. CONTACT_FROM must be on a Resend-verified
+      # domain, e.g. "Suganth <contact@send.suganth.me>".
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      CONTACT_FROM: ${CONTACT_FROM:-}
     volumes:
       - uploads-data:/app/uploads
     ports:
