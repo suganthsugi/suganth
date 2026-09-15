@@ -28,14 +28,13 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
-# Prisma runtime: schema, migrations, engine, seed, and CLI deps.
+# Prisma schema, migrations, and seed script.
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/.bin ./node_modules/.bin
-COPY --from=builder /app/node_modules/bcryptjs ./node_modules/bcryptjs
-COPY --from=builder /app/node_modules/tsx ./node_modules/tsx
+# Full dependency tree so the entrypoint can run the Prisma CLI (migrate
+# deploy) and tsx (seed) at container start. The Prisma CLI pulls transitive
+# deps (e.g. `effect` via @prisma/config) that a cherry-picked copy misses,
+# so copy node_modules wholesale over the standalone output's minimal set.
+COPY --from=builder /app/node_modules ./node_modules
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
 RUN chmod +x ./docker-entrypoint.sh
 
