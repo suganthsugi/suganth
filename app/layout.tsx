@@ -57,6 +57,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: config?.title ?? "Portfolio",
     description: config?.description ?? "A configurable portfolio.",
+    // Use the uploaded profile photo (a URL or data: URI in avatarUrl) as the
+    // favicon / apple-touch icon. Falls back to the browser default when unset.
+    ...(config?.avatarUrl
+      ? { icons: { icon: config.avatarUrl, apple: config.avatarUrl } }
+      : {}),
   };
 }
 
