@@ -123,10 +123,8 @@ export default async function RootLayout({
               <Link href="/contact" className={navLinkClass}>
                 Contact
               </Link>
-              <ThemeToggle />
             </nav>
             <div className="flex shrink-0 items-center gap-2 sm:hidden">
-              <ThemeToggle />
               <MobileNav links={navLinks} />
             </div>
           </header>
@@ -137,7 +135,16 @@ export default async function RootLayout({
             <p className="m-0 font-label text-[11px] tracking-wide text-ink2">
               © {year} {config?.ownerName || name}
             </p>
-            <SocialLinks links={socialLinks} email={config?.email} />
+            <div className="flex items-center gap-2">
+              <SocialLinks links={socialLinks} email={config?.email} />
+              {(socialLinks.length > 0 || config?.email) && (
+                <span
+                  aria-hidden
+                  className="mx-1 h-5 w-px shrink-0 bg-line"
+                />
+              )}
+              <ThemeToggle />
+            </div>
           </footer>
         </div>
       </body>
