@@ -15,7 +15,7 @@ export default async function AboutPage() {
     .filter(Boolean);
 
   const hasSidebar =
-    config?.currentRole || config?.location || tools.length > 0 || socialLinks.length > 0 || config?.email;
+    config?.currentRole || config?.location || tools.length > 0 || socialLinks.length > 0;
 
   return (
     <div>
@@ -73,14 +73,10 @@ export default async function AboutPage() {
                 </p>
               </div>
             )}
-            {(socialLinks.length > 0 || config?.email) && (
+            {socialLinks.length > 0 && (
               <div>
                 <p className="eyebrow mb-2.5 text-ink2">Elsewhere</p>
-                <SocialLinks
-                  links={socialLinks}
-                  email={config?.email}
-                  variant="stacked"
-                />
+                <SocialLinks links={socialLinks} variant="stacked" />
               </div>
             )}
           </div>

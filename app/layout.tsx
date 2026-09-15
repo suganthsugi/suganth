@@ -136,8 +136,8 @@ export default async function RootLayout({
               © {year} {config?.ownerName || name}
             </p>
             <div className="flex items-center gap-2">
-              <SocialLinks links={socialLinks} email={config?.email} />
-              {(socialLinks.length > 0 || config?.email) && (
+              <SocialLinks links={socialLinks} />
+              {socialLinks.length > 0 && (
                 <span
                   aria-hidden
                   className="mx-1 h-5 w-px shrink-0 bg-line"

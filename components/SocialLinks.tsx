@@ -61,26 +61,19 @@ function Icon({ platform, className }: { platform: string; className?: string })
 
 export default function SocialLinks({
   links,
-  email,
   className = "",
   variant = "icons",
 }: {
   links: SocialLinkData[];
-  email?: string | null;
   className?: string;
   /** "icons" — round icon buttons (footer). "stacked" — a vertical list of
    * bordered rows with icon + label (About / Contact sidebars). */
   variant?: "icons" | "stacked";
 }) {
-  const items = [...links];
-  if (email) {
-    items.push({
-      id: "email",
-      label: "Email",
-      url: `mailto:${email}`,
-      platform: "email",
-    });
-  }
+  // Email is not injected from SiteConfig here — add an email link via admin
+  // Social Links (platform "email") if you want it shown, so it can't
+  // duplicate. `config.email` remains the contact-form target only.
+  const items = links;
   if (items.length === 0) return null;
 
   if (variant === "stacked") {

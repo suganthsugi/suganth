@@ -43,10 +43,10 @@ export default async function ContactPage() {
           <ContactForm email={config?.email} />
         </div>
 
-        {(socialLinks.length > 0 || config?.email) && (
+        {socialLinks.length > 0 && (
           <div className="border-line pl-0 sm:border-l sm:pl-6">
             <p className="eyebrow mb-4 text-ink2">Reach me via</p>
-            <SocialLinks links={socialLinks} email={config?.email} variant="stacked" />
+            <SocialLinks links={socialLinks} variant="stacked" />
             {config?.location && (
               <p className="m-0 mt-[22px] text-[13px] leading-relaxed text-ink2">
                 Based in {config.location}.
