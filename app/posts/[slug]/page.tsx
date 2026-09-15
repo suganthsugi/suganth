@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { extractFirstImage, readingMinutes } from "@/lib/content";
+import { extractFirstImage, readingMinutes, removeFirstImage } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +24,9 @@ export default async function PostPage({
     year: "numeric",
   });
   const image = extractFirstImage(post.contentHtml);
+  // The first image is shown as the hero banner below; strip it from the body
+  // so it isn't rendered twice.
+  const bodyHtml = image ? removeFirstImage(post.contentHtml) : post.contentHtml;
 
   return (
     <article className="mx-auto max-w-[680px] pt-4 sm:pt-8">
@@ -89,7 +92,7 @@ export default async function PostPage({
 
       <div
         className="prose"
-        dangerouslySetInnerHTML={{ __html: post.contentHtml }}
+        dangerouslySetInnerHTML={{ __html: bodyHtml }}
       />
 
       {primary && (

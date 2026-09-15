@@ -11,6 +11,26 @@ export function extractFirstImage(html: string | null | undefined): string | nul
   return match ? match[1] : null;
 }
 
+/**
+ * Remove the first <img> from the HTML (plus its wrapping <p>/<figure> if that
+ * leaves the wrapper empty). The post page shows the first image as a hero
+ * banner derived via `extractFirstImage`, so it must not also appear inline in
+ * the rendered body. No-op when there's no image.
+ */
+export function removeFirstImage(html: string | null | undefined): string {
+  if (!html) return "";
+  let removed = false;
+  let out = html.replace(/<img[^>]*>/i, () => {
+    removed = true;
+    return "";
+  });
+  if (!removed) return html;
+  // Drop a now-empty wrapper left behind by the image (first occurrence only).
+  out = out.replace(/<p>\s*<\/p>/i, "");
+  out = out.replace(/<figure[^>]*>\s*<\/figure>/i, "");
+  return out;
+}
+
 /** Strip HTML tags to plain text (server-safe, no DOM). */
 export function stripHtml(html: string | null | undefined): string {
   if (!html) return "";
