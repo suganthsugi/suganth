@@ -10,7 +10,7 @@ export const runtime = "nodejs";
  * path traversal, and cached immutably since each name is unique per upload.
  */
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ name: string }> },
 ) {
   const { name } = await params;
@@ -25,10 +25,23 @@ export async function GET(
     return new Response("Not found", { status: 404 });
   }
 
-  return new Response(new Uint8Array(bytes), {
-    headers: {
-      "Content-Type": extToMime(name),
-      "Cache-Control": "public, max-age=31536000, immutable",
-    },
-  });
+  const headers: Record<string, string> = {
+    "Content-Type": extToMime(name),
+    "Cache-Control": "public, max-age=31536000, immutable",
+  };
+
+  // An optional `?filename=` lets the caller preserve the original download name
+  // (files are stored under a uuid). Sanitized to avoid header injection; served
+  // `inline` so PDFs still open in-tab but save with the friendly name.
+  const requested = new URL(request.url).searchParams.get("filename");
+  if (requested) {
+    const clean = requested.replace(/[\r\n"\\/]/g, "").slice(0, 200);
+    if (clean) {
+      const ascii = clean.replace(/[^\x20-\x7E]/g, "_");
+      headers["Content-Disposition"] =
+        `inline; filename="${ascii}"; filename*=UTF-8''${encodeURIComponent(clean)}`;
+    }
+  }
+
+  return new Response(new Uint8Array(bytes), { headers });
 }

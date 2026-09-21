@@ -89,7 +89,9 @@ export default function SettingsForm({
       if (!res.ok || !data.location) {
         throw new Error(data.error || "Upload failed.");
       }
-      setResumeUrl(data.location);
+      // Preserve the original filename so downloads keep it (files are stored
+      // under a uuid on disk). Served back via Content-Disposition.
+      setResumeUrl(`${data.location}?filename=${encodeURIComponent(file.name)}`);
     } catch (err) {
       setResumeError(err instanceof Error ? err.message : "Upload failed.");
     } finally {
