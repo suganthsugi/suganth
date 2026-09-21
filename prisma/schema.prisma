@@ -46,11 +46,19 @@ model Post {
   contentHtml String         @default("")
   excerpt     String?
   published   Boolean        @default(false)
+  // Editable date shown to visitors everywhere the post's date appears. Lets a
+  // post written today reflect when its content is really from. Null falls back
+  // to `createdAt` for display. Never affects ordering — see `order`.
+  displayDate DateTime?
+  // Manual sort position for all listings (ascending). Admin-controlled via
+  // drag-and-drop in admin → Posts; replaces createdAt as the listing order.
+  order       Int            @default(0)
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
   categories  PostCategory[]
 
   @@index([published, createdAt])
+  @@index([order])
 }
 
 /// Many-to-many join: a post can belong to multiple categories.

@@ -19,10 +19,13 @@ export default async function PostPage({
   if (!post || !post.published) notFound();
 
   const primary = post.categories[0]?.category;
-  const date = post.createdAt.toLocaleDateString(undefined, {
-    month: "short",
-    year: "numeric",
-  });
+  const date = (post.displayDate ?? post.createdAt).toLocaleDateString(
+    undefined,
+    {
+      month: "short",
+      year: "numeric",
+    },
+  );
   const image = extractFirstImage(post.contentHtml);
   // The first image is shown as the hero banner below; strip it from the body
   // so it isn't rendered twice.

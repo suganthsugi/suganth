@@ -9,6 +9,7 @@ type PostWithCategories = {
   contentHtml: string;
   excerpt: string | null;
   createdAt: Date;
+  displayDate: Date | null;
   categories: { category: { name: string; slug: string } }[];
 };
 
@@ -22,6 +23,7 @@ export function toListItem(post: PostWithCategories): PostListItem {
     image: extractFirstImage(post.contentHtml),
     categories: post.categories.map((pc) => pc.category),
     createdAt: post.createdAt.toISOString(),
+    displayDate: (post.displayDate ?? post.createdAt).toISOString(),
   };
 }
 
@@ -34,7 +36,7 @@ export async function getPublishedPosts(): Promise<PostListItem[]> {
   const posts = await prisma.post.findMany({
     where: { published: true },
     include: listInclude,
-    orderBy: { createdAt: "desc" },
+    orderBy: { order: "asc" },
   });
   return posts.map(toListItem);
 }
@@ -47,7 +49,7 @@ export async function getPostsByCategory(slug: string): Promise<PostListItem[]> 
       categories: { some: { category: { slug } } },
     },
     include: listInclude,
-    orderBy: { createdAt: "desc" },
+    orderBy: { order: "asc" },
   });
   return posts.map(toListItem);
 }
@@ -71,7 +73,7 @@ export async function getHomeSections(perSection = 6): Promise<HomeSection[]> {
       posts: {
         where: { post: { published: true } },
         include: { post: { include: listInclude } },
-        orderBy: { post: { createdAt: "desc" } },
+        orderBy: { post: { order: "asc" } },
       },
     },
   });

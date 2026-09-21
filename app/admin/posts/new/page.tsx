@@ -23,6 +23,7 @@ export default async function NewPostPage() {
             contentHtml: "",
             published: false,
             categoryIds: [],
+            displayDate: new Date().toISOString().slice(0, 10),
           }}
         />
       </div>

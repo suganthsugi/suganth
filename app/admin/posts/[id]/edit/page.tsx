@@ -38,6 +38,9 @@ export default async function EditPostPage({
             contentHtml: post.contentHtml,
             published: post.published,
             categoryIds: post.categories.map((c) => c.categoryId),
+            displayDate: (post.displayDate ?? post.createdAt)
+              .toISOString()
+              .slice(0, 10),
           }}
         />
       </div>

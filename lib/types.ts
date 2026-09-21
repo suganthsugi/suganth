@@ -7,4 +7,7 @@ export type PostListItem = {
   image: string | null;
   categories: { name: string; slug: string }[];
   createdAt: string;
+  // Resolved date shown to visitors: the post's `displayDate` when set,
+  // otherwise its `createdAt`. Always an ISO string.
+  displayDate: string;
 };

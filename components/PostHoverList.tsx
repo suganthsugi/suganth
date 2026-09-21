@@ -161,7 +161,7 @@ export default function PostHoverList({
                 )}
               </div>
               <span className="whitespace-nowrap pt-2 font-label text-[11px] text-ink2">
-                {fmtDate(p.createdAt)}
+                {fmtDate(p.displayDate)}
               </span>
             </div>
           </Link>
@@ -177,7 +177,7 @@ export default function PostHoverList({
               {p.title}
             </span>
             <span className="font-label text-[11px] text-ink2 sm:shrink-0 sm:whitespace-nowrap">
-              {fmtDate(p.createdAt)}
+              {fmtDate(p.displayDate)}
             </span>
           </Link>
         );

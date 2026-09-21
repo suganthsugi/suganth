@@ -12,6 +12,8 @@ export type PostFormValues = {
   contentHtml: string;
   published: boolean;
   categoryIds: string[];
+  // yyyy-mm-dd for the native date input.
+  displayDate: string;
 };
 
 export default function PostForm({
@@ -55,6 +57,24 @@ export default function PostForm({
         <RichTextEditor value={contentHtml} onChange={setContentHtml} />
         <p className="mt-1 text-xs text-muted">
           The first image in the content becomes the listing hover preview.
+        </p>
+      </div>
+
+      <div>
+        <label htmlFor="displayDate" className="block text-sm font-medium">
+          Display date
+        </label>
+        <input
+          id="displayDate"
+          name="displayDate"
+          type="date"
+          defaultValue={initial.displayDate}
+          className="mt-1 rounded-md border border-border bg-surface px-3 py-2 outline-none focus:border-accent"
+        />
+        <p className="mt-1 text-xs text-muted">
+          The date shown on the post everywhere. Defaults to today; set an
+          earlier date to reflect when the content is really from. Doesn&apos;t
+          affect ordering.
         </p>
       </div>
 
