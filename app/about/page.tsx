@@ -15,7 +15,11 @@ export default async function AboutPage() {
     .filter(Boolean);
 
   const hasSidebar =
-    config?.currentRole || config?.location || tools.length > 0 || socialLinks.length > 0;
+    config?.resumeUrl ||
+    config?.currentRole ||
+    config?.location ||
+    tools.length > 0 ||
+    socialLinks.length > 0;
 
   return (
     <div>
@@ -55,6 +59,32 @@ export default async function AboutPage() {
 
         {hasSidebar && (
           <div className="flex flex-col gap-7 border-line pl-0 sm:border-l sm:pl-6">
+            {config?.resumeUrl && (
+              <a
+                href={config.resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center justify-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-4 py-2.5 font-label text-[12px] uppercase tracking-wide text-accent transition-colors hover:bg-accent hover:text-accent-fg"
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden
+                >
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <path d="M14 2v6h6" />
+                  <path d="M9 15h6" />
+                  <path d="M9 11h2" />
+                </svg>
+                Resume
+              </a>
+            )}
             {(config?.currentRole || config?.location) && (
               <div>
                 <p className="eyebrow mb-2.5 text-ink2">Currently</p>

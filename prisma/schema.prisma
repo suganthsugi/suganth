@@ -85,6 +85,9 @@ model SiteConfig {
   // (the admin uploader downsizes the image client-side and stores it as
   // one). Blank falls back to the owner's initial letter.
   avatarUrl   String?
+  // Uploaded resume/CV (PDF) — a `/api/uploads/<id>.pdf` URL. Blank hides the
+  // "Resume" button on the About page. Uploaded in admin Settings.
+  resumeUrl   String?
   // Personal / contact details — all optional, all editable in admin settings.
   ownerName    String?
   email        String?

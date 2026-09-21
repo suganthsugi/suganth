@@ -9,6 +9,7 @@ const schema = z.object({
   description: z.string().trim().max(300).default(""),
   headlineHighlight: z.string().trim().max(160).optional(),
   avatarUrl: z.string().trim().max(400000).optional(),
+  resumeUrl: z.string().trim().max(400).optional(),
   ownerName: z.string().trim().max(120).optional(),
   email: z
     .string()
@@ -36,6 +37,7 @@ export async function updateSettings(
     description: formData.get("description") ?? "",
     headlineHighlight: formData.get("headlineHighlight") ?? "",
     avatarUrl: formData.get("avatarUrl") ?? "",
+    resumeUrl: formData.get("resumeUrl") ?? "",
     ownerName: formData.get("ownerName") ?? "",
     email: formData.get("email") ?? "",
     location: formData.get("location") ?? "",
@@ -52,6 +54,7 @@ export async function updateSettings(
     description: parsed.data.description,
     headlineHighlight: parsed.data.headlineHighlight || null,
     avatarUrl: parsed.data.avatarUrl || null,
+    resumeUrl: parsed.data.resumeUrl || null,
     ownerName: parsed.data.ownerName || null,
     email: parsed.data.email || null,
     location: parsed.data.location || null,

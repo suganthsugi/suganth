@@ -33,14 +33,14 @@ export async function POST(request: Request) {
   const ext = MIME_TO_EXT[file.type];
   if (!ext) {
     return Response.json(
-      { error: "Unsupported image type. Use PNG, JPEG, WebP, GIF or AVIF." },
+      { error: "Unsupported file type. Use PNG, JPEG, WebP, GIF, AVIF or PDF." },
       { status: 400 },
     );
   }
 
   if (file.size > MAX_BYTES) {
     return Response.json(
-      { error: "Image is too large (max 10 MB)." },
+      { error: "File is too large (max 10 MB)." },
       { status: 413 },
     );
   }

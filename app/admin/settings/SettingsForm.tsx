@@ -39,6 +39,7 @@ export default function SettingsForm({
     description: string;
     headlineHighlight: string;
     avatarUrl: string;
+    resumeUrl: string;
     ownerName: string;
     email: string;
     location: string;
@@ -58,6 +59,11 @@ export default function SettingsForm({
   const [avatarError, setAvatarError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const [resumeUrl, setResumeUrl] = useState(initial.resumeUrl);
+  const [resumeError, setResumeError] = useState<string | null>(null);
+  const [resumeUploading, setResumeUploading] = useState(false);
+  const resumeInputRef = useRef<HTMLInputElement>(null);
+
   async function onAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -66,6 +72,29 @@ export default function SettingsForm({
       setAvatarUrl(await fileToAvatarDataUrl(file));
     } catch {
       setAvatarError("Couldn't read that image — try a different file.");
+    }
+  }
+
+  // Upload the PDF to /api/uploads (admin-only) and keep the returned URL.
+  async function onResumeChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setResumeError(null);
+    setResumeUploading(true);
+    try {
+      const body = new FormData();
+      body.append("file", file);
+      const res = await fetch("/api/uploads", { method: "POST", body });
+      const data = (await res.json()) as { location?: string; error?: string };
+      if (!res.ok || !data.location) {
+        throw new Error(data.error || "Upload failed.");
+      }
+      setResumeUrl(data.location);
+    } catch (err) {
+      setResumeError(err instanceof Error ? err.message : "Upload failed.");
+    } finally {
+      setResumeUploading(false);
+      if (resumeInputRef.current) resumeInputRef.current.value = "";
     }
   }
 
@@ -122,6 +151,57 @@ export default function SettingsForm({
         </div>
         {avatarError && <p className="mt-1 text-sm text-red-500">{avatarError}</p>}
         <input type="hidden" name="avatarUrl" value={avatarUrl} />
+      </div>
+
+      <div>
+        <span className="block text-sm font-medium">
+          Resume / CV <span className="text-muted">(PDF)</span>
+        </span>
+        <div className="mt-2 flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            onClick={() => resumeInputRef.current?.click()}
+            disabled={resumeUploading}
+            className="rounded-md border border-border px-3 py-2 text-sm text-muted transition-colors hover:border-accent hover:text-fg disabled:opacity-60"
+          >
+            {resumeUploading
+              ? "Uploading…"
+              : resumeUrl
+                ? "Replace PDF"
+                : "Upload PDF"}
+          </button>
+          {resumeUrl && (
+            <>
+              <a
+                href={resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-accent hover:underline"
+              >
+                View current
+              </a>
+              <button
+                type="button"
+                onClick={() => setResumeUrl("")}
+                className="text-sm text-muted hover:text-red-500"
+              >
+                Remove
+              </button>
+            </>
+          )}
+          <input
+            ref={resumeInputRef}
+            type="file"
+            accept="application/pdf"
+            onChange={onResumeChange}
+            className="hidden"
+          />
+        </div>
+        <p className="mt-1 text-xs text-muted">
+          Shown as a “Resume” button on the About page. Max 10 MB.
+        </p>
+        {resumeError && <p className="mt-1 text-sm text-red-500">{resumeError}</p>}
+        <input type="hidden" name="resumeUrl" value={resumeUrl} />
       </div>
 
       <div>

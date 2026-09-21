@@ -24,6 +24,7 @@ export default async function SettingsPage() {
               description: config?.description ?? "",
               headlineHighlight: config?.headlineHighlight ?? "",
               avatarUrl: config?.avatarUrl ?? "",
+              resumeUrl: config?.resumeUrl ?? "",
               ownerName: config?.ownerName ?? "",
               email: config?.email ?? "",
               location: config?.location ?? "",
