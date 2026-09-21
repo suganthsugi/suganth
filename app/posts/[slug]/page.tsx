@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { extractFirstImage, readingMinutes, removeFirstImage } from "@/lib/content";
+import Lightbox from "@/components/Lightbox";
 
 export const dynamic = "force-dynamic";
 
@@ -83,20 +84,22 @@ export default async function PostPage({
         </p>
       )}
 
-      {image && (
-        <div
-          className="reveal relative mb-14 aspect-[16/9] overflow-hidden rounded-2xl border border-line bg-bg2"
-          style={{ "--reveal-delay": "200ms" } as React.CSSProperties}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={image} alt="" className="h-full w-full object-cover" />
-        </div>
-      )}
+      <Lightbox>
+        {image && (
+          <div
+            className="reveal relative mb-14 aspect-[16/9] overflow-hidden rounded-2xl border border-line bg-bg2"
+            style={{ "--reveal-delay": "200ms" } as React.CSSProperties}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={image} alt="" className="h-full w-full object-cover" />
+          </div>
+        )}
 
-      <div
-        className="prose"
-        dangerouslySetInnerHTML={{ __html: bodyHtml }}
-      />
+        <div
+          className="prose"
+          dangerouslySetInnerHTML={{ __html: bodyHtml }}
+        />
+      </Lightbox>
 
       {primary && (
         <div className="mt-14 border-t border-line pt-6">

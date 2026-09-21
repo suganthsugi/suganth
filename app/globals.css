@@ -180,6 +180,13 @@ body {
   margin: 1.75rem 0;
   border: 1px solid rgb(var(--line) / var(--line-a));
 }
+/* Click-to-zoom affordance for post/project images (see components/Lightbox). */
+.zoomable img {
+  cursor: zoom-in;
+}
+.zoomable a img {
+  cursor: pointer;
+}
 .prose pre {
   background: rgb(var(--bg2));
   border: 1px solid rgb(var(--line) / var(--line-a));
