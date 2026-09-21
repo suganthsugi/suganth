@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useRef, useState } from "react";
+import RichTextEditor from "@/components/editor/RichTextEditor";
 import { updateSettings, type SettingsState } from "./actions";
 
 /** Downscale an image client-side and resolve a compact JPEG data: URI —
@@ -53,6 +54,7 @@ export default function SettingsForm({
     {},
   );
   const [avatarUrl, setAvatarUrl] = useState(initial.avatarUrl);
+  const [aboutHtml, setAboutHtml] = useState(initial.aboutHtml);
   const [avatarError, setAvatarError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -243,17 +245,13 @@ export default function SettingsForm({
       </div>
 
       <div>
-        <label htmlFor="aboutHtml" className="block text-sm font-medium">
+        <span className="block text-sm font-medium mb-1">
           About page body{" "}
-          <span className="text-muted">(HTML — blank falls back to your bio)</span>
-        </label>
-        <textarea
-          id="aboutHtml"
-          name="aboutHtml"
-          defaultValue={initial.aboutHtml}
-          rows={5}
-          className="mt-1 w-full rounded-md border border-border bg-surface px-3 py-2 font-mono text-xs outline-none focus:border-accent"
-        />
+          <span className="text-muted">(blank falls back to your bio)</span>
+        </span>
+        {/* Editor HTML is synced into this hidden field for submission. */}
+        <input type="hidden" name="aboutHtml" value={aboutHtml} />
+        <RichTextEditor value={aboutHtml} onChange={setAboutHtml} />
       </div>
 
       {state.error && <p className="text-sm text-red-500">{state.error}</p>}
